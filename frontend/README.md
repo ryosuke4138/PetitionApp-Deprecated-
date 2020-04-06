@@ -1,10 +1,10 @@
-# petition-app
+# petition app
 
 > It's easy tool to create a online petition for free.
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
