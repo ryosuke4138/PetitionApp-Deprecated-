@@ -1,36 +1,30 @@
 import Vue from "vue";
 import App from "./App.vue";
-import Home from "./Home.vue";
-import Profile from "./Profile.vue";
+import router from "./router";
+import store from "./store";
+import vuetify from "./plugins/vuetify";
+import "./registerServiceWorker.js";
 
-import VueRouter from "vue-router";
-Vue.use(VueRouter);
+// import { CHECK_AUTH } from "./store/actions.type";
+import ApiService from "./common/api.service";
+// import DateFilter from "./common/date.filter";
+// import ErrorFilter from "./common/error.filter";
 
-import VueResource from "vue-resource";
-Vue.use(VueResource);
+Vue.config.productionTip = false;
+// Vue.filter("date", DateFilter);
+// Vue.filter("error", ErrorFilter);
 
-Vue.http.options.emulateJSON = true;
+ApiService.init();
 
-const routes = [
-  {
-    path: "/",
-    name: "/",
-    component: Home
-  },
-  {
-    path: "/profile",
-    name: "profile",
-    component: Profile
-  }
-];
-
-const router = new VueRouter({
-  routes: routes,
-  mode: "history"
-});
+// Ensure we checked auth before each page load.
+// router.beforeEach((to, from, next) =>
+//   Promise.all([store.dispatch(CHECK_AUTH)]).then(next)
+// );
 
 new Vue({
-  el: "#app",
-  router: router,
-  render: h => h(App)
-});
+  router,
+  store,
+  vuetify,
+  // store,
+  render: (h) => h(App),
+}).$mount("#app");
