@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <h1>Sign up</h1>
+    <p class="text-xs-center">
+      <router-link :to="{ name: 'login' }">
+        Have an account?
+      </router-link>
+    </p>
+    <form @submit.prevent="onSubmit">
+      <fieldset class="form-group">
+        <input
+          class="form-control form-control-lg"
+          type="text"
+          v-model="name"
+          placeholder="Username"
+        />
+      </fieldset>
+      <fieldset class="form-group">
+        <input
+          class="form-control form-control-lg"
+          type="text"
+          v-model="email"
+          placeholder="Email"
+        />
+      </fieldset>
+      <fieldset class="form-group">
+        <input
+          class="form-control form-control-lg"
+          type="password"
+          v-model="password"
+          placeholder="Password"
+        />
+      </fieldset>
+      <button class="btn btn-lg btn-primary pull-xs-right">
+        Sign up
+      </button>
+    </form>
+  </div>
+</template>
+
+<script>
+// import { mapState } from "vuex";
+import { REGISTER } from "@/store/actions.type";
+
+export default {
+  name: "Register",
+  data() {
+    return {
+      name: "",
+      email: "",
+      password: "",
+      city: "",
+      country: "",
+      profilePicture: "",
+    };
+  },
+  // computed: {
+  //   ...mapState({
+  //     errors: (state) => state.auth.errors,
+  //   }),
+  // },
+  methods: {
+    onSubmit() {
+      this.$store
+        .dispatch(REGISTER, {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+        })
+        .then(() => this.$router.push({ name: "home" }));
+    },
+  },
+};
+</script>

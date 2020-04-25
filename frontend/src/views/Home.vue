@@ -1,22 +1,22 @@
 <template>
-  <div class="home-page">
+  <home-layout>
     <h1>List of Petitions</h1>
     <p v-for="petition in petitions" :name="petition" :key="petition.title">
       {{ petition.title }}
     </p>
-  </div>
+  </home-layout>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-// import RwvTag from "@/components/VTag";
+import HomeLayout from "@/layouts/Home";
 import { FETCH_PETITIONS } from "@/store/actions.type";
 
 export default {
   name: "home",
-  // components: {
-  //   RwvTag
-  // },
+  components: {
+    HomeLayout,
+  },
   // mounted() {
   //   this.$store.dispatch(FETCH_TAGS);
   // },

@@ -1,25 +1,27 @@
 import Vue from "vue";
 import Router from "vue-router";
+import store from "@/store/index.js";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
+  mode: "history",
   routes: [
     {
       path: "/",
       name: "home",
       component: () => import("@/views/Home"),
     },
-    // {
-    //   name: "login",
-    //   path: "/login",
-    //   component: () => import("@/views/Login")
-    // },
-    // {
-    //   name: "register",
-    //   path: "/register",
-    //   component: () => import("@/views/Register")
-    // },
+    {
+      name: "login",
+      path: "/login",
+      component: () => import("@/views/auth/Login"),
+    },
+    {
+      name: "register",
+      path: "/register",
+      component: () => import("@/views/auth/Register"),
+    },
     // {
     //   name: "settings",
     //   path: "/settings",
@@ -28,22 +30,23 @@ export default new Router({
     // // Handle child routes with a default, by giving the name to the
     // // child.
     // // SO: https://github.com/vuejs/vue-router/issues/777
-    // {
-    //   path: "/@:username",
-    //   component: () => import("@/views/Profile"),
-    //   children: [
-    //     {
-    //       path: "",
-    //       name: "profile",
-    //       component: () => import("@/views/ProfileArticles")
-    //     },
-    //     {
-    //       name: "profile-favorites",
-    //       path: "favorites",
-    //       component: () => import("@/views/ProfileFavorited")
-    //     }
-    //   ]
-    // },
+    {
+      name: "profile",
+      path: "/:username",
+      component: () => import("@/views/profile/Profile"),
+      // children: [
+      //   {
+      //     path: "",
+      //     name: "profile",
+      //     component: () => import("@/views/ProfileArticles"),
+      //   },
+      //   {
+      //     name: "profile-favorites",
+      //     path: "favorites",
+      //     component: () => import("@/views/ProfileFavorited"),
+      //   },
+      // ],
+    },
     // {
     //   name: "article",
     //   path: "/articles/:slug",
@@ -58,3 +61,22 @@ export default new Router({
     // }
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  console.log("start routing to " + to.path);
+  const isAuthenticated = store.getters.isAuthenticated;
+  console.log("isAuthenticated: " + isAuthenticated);
+
+  const isGoToAuthPage = to.path == "/register" || to.path == "/login";
+  const isGoToPageNotRequireLogin = to.path == "/";
+  if (isGoToAuthPage) {
+    //check if the user is already logged in
+    if (isAuthenticated) next("/");
+    else next();
+  } else if (isGoToPageNotRequireLogin) next();
+  //prevent the user from accessing page that needs to be authenticated
+  else if (!isAuthenticated) next("/");
+  else next();
+});
+
+export default router;

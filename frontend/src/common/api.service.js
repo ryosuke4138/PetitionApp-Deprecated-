@@ -3,7 +3,8 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 // import JwtService from "@/common/jwt.service";
 
-const API_URL = "http://csse-s365.canterbury.ac.nz:4001/api/v1/";
+// const API_URL = "http://csse-s365.canterbury.ac.nz:4001/api/v1/";
+const API_URL = "http://localhost:4941/api/v1/";
 
 const ApiService = {
   init() {
@@ -23,8 +24,9 @@ const ApiService = {
     });
   },
 
-  get(resource, slug = "") {
-    return Vue.axios.get(`${resource}/${slug}`).catch((error) => {
+  get(resource) {
+    // return Vue.axios.get(`${resource}/${slug}`).catch((error) => {
+    return Vue.axios.get(resource).catch((error) => {
       throw new Error(`[RWV] ApiService ${error}`);
     });
   },
@@ -52,9 +54,7 @@ export default ApiService;
 
 export const PetitionsService = {
   query(params) {
-    return ApiService.query("petitions", {
-      params: params,
-    });
+    return ApiService.query("petitions", params);
   },
   get(slug) {
     return ApiService.get("petitions", slug);
@@ -70,6 +70,21 @@ export const PetitionsService = {
   },
   getCategories() {
     return ApiService.get("petitions", "categories");
+  },
+};
+
+export const UserService = {
+  register(params) {
+    return ApiService.post("users/register", params);
+  },
+  login(params) {
+    return ApiService.post("users/login", params);
+  },
+  get(slug) {
+    return ApiService.get("users/" + slug);
+  },
+  update(slug, params) {
+    return ApiService.put("users", slug, params);
   },
 };
 
