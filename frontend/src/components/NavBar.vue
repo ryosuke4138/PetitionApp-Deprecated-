@@ -1,7 +1,7 @@
 <template>
   <v-toolbar max-height="64px">
     <v-app-bar-nav-icon></v-app-bar-nav-icon>
-    <v-toolbar-title>Petittion App</v-toolbar-title>
+    <TitleButton />
     <v-spacer></v-spacer>
     <v-btn v-if="!isAuthenticated">
       <router-link :to="{ name: 'login' }">Login</router-link>
@@ -24,11 +24,13 @@
 
 <script>
 import LogoutButton from "@/components/ui/LogoutButton";
+import TitleButton from "@/components/ui/TitleButton";
 import { mapGetters } from "vuex";
 
 export default {
   components: {
-    LogoutButton
+    LogoutButton,
+    TitleButton
   },
   computed: {
     ...mapGetters(["isAuthenticated", "user"])

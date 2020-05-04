@@ -15,6 +15,7 @@
     </v-card-text>
 
     <v-card-actions>
+      <v-spacer></v-spacer>
       <v-btn @click="openModal" text>Explore</v-btn>
     </v-card-actions>
   </v-card>
