@@ -1,9 +1,7 @@
 <template>
   <v-app>
     <NavBar />
-    <v-container>
-      <slot />
-    </v-container>
+    <slot />
   </v-app>
 </template>
 
@@ -12,7 +10,7 @@ import NavBar from "@/components/NavBar";
 export default {
   name: "App",
   components: {
-    NavBar,
-  },
+    NavBar
+  }
 };
 </script>

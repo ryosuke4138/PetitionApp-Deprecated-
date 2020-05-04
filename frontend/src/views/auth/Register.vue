@@ -2,9 +2,8 @@
   <div>
     <h1>Sign up</h1>
     <p class="text-xs-center">
-      <router-link :to="{ name: 'login' }">
-        Have an account?
-      </router-link>
+      <router-link :to="{ name: 'home' }">Go back to home</router-link>
+      <router-link :to="{ name: 'login' }">Have an account?</router-link>
     </p>
     <form @submit.prevent="onSubmit">
       <fieldset class="form-group">
@@ -16,12 +15,7 @@
         />
       </fieldset>
       <fieldset class="form-group">
-        <input
-          class="form-control form-control-lg"
-          type="text"
-          v-model="email"
-          placeholder="Email"
-        />
+        <input class="form-control form-control-lg" type="text" v-model="email" placeholder="Email" />
       </fieldset>
       <fieldset class="form-group">
         <input
@@ -31,9 +25,7 @@
           placeholder="Password"
         />
       </fieldset>
-      <button class="btn btn-lg btn-primary pull-xs-right">
-        Sign up
-      </button>
+      <button class="btn btn-lg btn-primary pull-xs-right">Sign up</button>
     </form>
   </div>
 </template>
@@ -51,7 +43,7 @@ export default {
       password: "",
       city: "",
       country: "",
-      profilePicture: "",
+      profilePicture: ""
     };
   },
   // computed: {
@@ -65,10 +57,10 @@ export default {
         .dispatch(REGISTER, {
           name: this.name,
           email: this.email,
-          password: this.password,
+          password: this.password
         })
         .then(() => this.$router.push({ name: "home" }));
-    },
-  },
+    }
+  }
 };
 </script>

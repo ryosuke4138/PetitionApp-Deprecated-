@@ -1,29 +1,51 @@
 import { PetitionsService } from "@/common/api.service";
-import { FETCH_PETITIONS } from "@/store/actions.type";
+import {
+  FETCH_PETITION,
+  DELETE_PETITION,
+  UPDATE_PETITION,
+  PUBLISH_PETITION,
+} from "@/store/actions.type";
 import { SET_PETITION } from "@/store/mutations.type";
 
 const initialState = {
   petition: {
-    petitionId: "",
+    petitionId: null,
     title: "",
+    category: "",
+    authorName: "",
+    signatureCount: null,
     description: "",
-    authorId: "",
-    categoryId: "",
+    authorCity: "",
+    authorCountry: "",
     createdDate: "",
     closingDate: "",
-    photoFilename: "",
   },
 };
 
 export const state = { ...initialState };
 
 export const actions = {
-  async [FETCH_PETITIONS](context, petitionSlug, prevPetition) {
+  async [FETCH_PETITION](context, slug, prevPetition) {
     // avoid extronuous network call if petition exists
     if (prevPetition !== undefined) {
       return context.commit(SET_PETITION, prevPetition);
     }
-    const { data } = await PetitionsService.get(petitionSlug);
+    const { data } = await PetitionsService.get(slug);
+    context.commit(SET_PETITION, data);
+    return data;
+  },
+  async [DELETE_PETITION](context, slug) {
+    const { data } = await PetitionsService.destroy(slug);
+    context.commit(SET_PETITION, initialState.petition);
+    return data;
+  },
+  async [UPDATE_PETITION](context, slug, params) {
+    const { data } = await PetitionsService.update(slug, params);
+    context.commit(SET_PETITION, data);
+    return data;
+  },
+  async [PUBLISH_PETITION](context, params) {
+    const { data } = await PetitionsService.create(params);
     context.commit(SET_PETITION, data);
     return data;
   },
@@ -37,7 +59,7 @@ export const mutations = {
 };
 
 const getters = {
-  petitions(state) {
+  petition(state) {
     return state.petition;
   },
 };

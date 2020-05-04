@@ -1,29 +1,9 @@
-import { PetitionsService } from "@/common/api.service";
-import { FETCH_PETITIONS } from "@/store/actions.type";
-import { SET_PETITION } from "@/store/mutations.type";
+export const state = {};
 
-export const state = {
-  petition: {},
-};
-
-export const actions = {
-  [FETCH_PETITIONS](context, petitionSlug) {
-    return PetitionsService.get(petitionSlug)
-      .then(({ data }) => {
-        context.commit(SET_PETITION, data.petition);
-      })
-      .catch((error) => {
-        throw new Error(error);
-      });
-  },
-};
+export const actions = {};
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
-export const mutations = {
-  [SET_PETITION](state, petition) {
-    state.petittion = petition;
-  },
-};
+export const mutations = {};
 
 export default {
   state,

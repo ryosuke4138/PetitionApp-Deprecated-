@@ -1,4 +1,9 @@
+export const FETCH_PETITION = "fetchPetition";
+export const DELETE_PETITION = "deletePetition";
+export const UPDATE_PETITION = "updatePetition";
+export const PUBLISH_PETITION = "publishPetition";
 export const FETCH_PETITIONS = "fetchPetitions";
+export const FETCH_PETITION_CATEGORY = "fetchPetitionCateogy";
 export const LOGIN = "login";
 export const LOGOUT = "logout";
 export const REGISTER = "register";

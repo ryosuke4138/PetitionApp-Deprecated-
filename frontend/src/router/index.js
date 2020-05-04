@@ -23,6 +23,11 @@ const router = new Router({
       component: () => import("@/views/auth/Register"),
     },
     // {
+    //   name: "petitionDetails",
+    //   path: "/petition/:petitionId",
+    //   component: () => import("@/views/petition/PetitionDetails"),
+    // },
+    // {
     //   name: "settings",
     //   path: "/settings",
     //   component: () => import("@/views/Settings")
@@ -32,7 +37,7 @@ const router = new Router({
     // // SO: https://github.com/vuejs/vue-router/issues/777
     {
       name: "profile",
-      path: "/:username",
+      path: "/user/:username",
       component: () => import("@/views/profile/Profile"),
       // children: [
       //   {
