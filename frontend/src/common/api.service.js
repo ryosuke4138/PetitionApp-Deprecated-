@@ -2,7 +2,6 @@ import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import API_URL from "@/common/config";
-// import JwtService from "@/common/jwt.service";
 
 const ApiService = {
   init() {
@@ -10,11 +9,9 @@ const ApiService = {
     Vue.axios.defaults.baseURL = API_URL;
   },
 
-  // setHeader() {
-  //   Vue.axios.defaults.headers.common[
-  //     "Authorization"
-  //   ] = `Token ${JwtService.getToken()}`;
-  // },
+  setHeader(token) {
+    Vue.axios.defaults.headers.common["X-Authorization"] = token;
+  },
 
   query(resource, params) {
     return Vue.axios.get(resource, params).catch((error) => {
@@ -32,12 +29,13 @@ const ApiService = {
     return Vue.axios.post(`${resource}`, params);
   },
 
-  put(resource, params) {
-    return Vue.axios.put(`${resource}`, params);
-  },
-
   update(resource, slug, params) {
     return Vue.axios.put(`${resource}/${slug}`, params);
+  },
+
+  putPhoto(resource, params, imageType) {
+    const headers = { "content-type": imageType };
+    return Vue.axios.put(`${resource}`, params, { headers });
   },
 
   delete(resource) {
@@ -57,16 +55,19 @@ export const PetitionsService = {
     return ApiService.get("petitions", slug);
   },
   create(params) {
-    return ApiService.post("petitions", { petition: params });
+    return ApiService.post("petitions", params);
   },
   update(slug, params) {
-    return ApiService.update("petitions", slug, { petition: params });
+    return ApiService.update("petitions", slug, params);
   },
   destroy(slug) {
     return ApiService.delete(`petitions/${slug}`);
   },
   getCategories() {
     return ApiService.get("petitions", "categories");
+  },
+  updatePhoto(slug, params, imageType) {
+    return ApiService.putPhoto(`petitions/${slug}/photo`, params, imageType);
   },
 };
 
@@ -78,9 +79,9 @@ export const UserService = {
     return ApiService.post("users/login", params);
   },
   get(slug) {
-    return ApiService.get("users/" + slug);
+    return ApiService.get("users", slug);
   },
   update(slug, params) {
-    return ApiService.put("users/", slug, params);
+    return ApiService.put("users", slug, params);
   },
 };

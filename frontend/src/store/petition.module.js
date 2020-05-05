@@ -1,24 +1,26 @@
 import { PetitionsService } from "@/common/api.service";
 import {
+  DO_RESET_PETITION,
   FETCH_PETITION,
   DELETE_PETITION,
   UPDATE_PETITION,
   PUBLISH_PETITION,
+  PUT_PETITION_PHOTO,
 } from "@/store/actions.type";
-import { SET_PETITION } from "@/store/mutations.type";
+import { SET_PETITION, RESET_PETITION } from "@/store/mutations.type";
 
 const initialState = {
   petition: {
     petitionId: null,
-    title: "",
-    category: "",
-    authorName: "",
+    title: null,
+    category: null,
+    authorName: null,
     signatureCount: null,
-    description: "",
-    authorCity: "",
-    authorCountry: "",
-    createdDate: "",
-    closingDate: "",
+    description: null,
+    authorCity: null,
+    authorCountry: null,
+    createdDate: null,
+    closingDate: null,
   },
 };
 
@@ -36,7 +38,7 @@ export const actions = {
   },
   async [DELETE_PETITION](context, slug) {
     const { data } = await PetitionsService.destroy(slug);
-    context.commit(SET_PETITION, initialState.petition);
+    context.commit(RESET_PETITION);
     return data;
   },
   async [UPDATE_PETITION](context, slug, params) {
@@ -45,9 +47,17 @@ export const actions = {
     return data;
   },
   async [PUBLISH_PETITION](context, params) {
-    const { data } = await PetitionsService.create(params);
-    context.commit(SET_PETITION, data);
-    return data;
+    return await PetitionsService.create(params);
+  },
+  [DO_RESET_PETITION](context) {
+    context.commit(RESET_PETITION);
+  },
+  async [PUT_PETITION_PHOTO](context, data) {
+    await PetitionsService.updatePhoto(
+      data.petitionId,
+      data.image,
+      data.imageType
+    );
   },
 };
 
@@ -55,6 +65,9 @@ export const actions = {
 export const mutations = {
   [SET_PETITION](state, petition) {
     state.petition = petition;
+  },
+  [RESET_PETITION](state) {
+    state.petition = initialState.petition;
   },
 };
 

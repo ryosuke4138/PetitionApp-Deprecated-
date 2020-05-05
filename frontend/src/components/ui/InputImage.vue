@@ -5,7 +5,7 @@
         v-if="!uploadedImage&&isCreate"
         class="white--text align-end"
         height="200px"
-        src="https://www.google.com/search?q=popular+Google+Doodle+games&oi=ddle&ct=153498762&hl=en-GB&source=doodle-ntp&ved=0ahUKEwjSmPWw_pjpAhXKyDgGHS-FCOgQPQgB"
+        :src="image"
       />
       <v-img
         v-if="!uploadedImage&&!isCreate"
@@ -41,9 +41,10 @@ export default {
     }
   },
   data: () => ({
+    image: require("@/assets/image/no_image.png"),
     API_URL: API_URL,
     uploadedImageFile: null,
-    uploadedImage: null,
+    uploadedImage: "",
     rules: [
       value =>
         !value ||
@@ -51,14 +52,6 @@ export default {
         "Image should be less than 50 MB, sorry"
     ]
   }),
-  watch: {
-    //reset image
-    uploadedImageFile: function(newUploadedImageFile) {
-      if (!newUploadedImageFile) {
-        this.uploadedImage = null;
-      }
-    }
-  },
   methods: {
     onFileChange(file) {
       if (!file || file.name.lastIndexOf(".") <= 0) {
@@ -69,6 +62,7 @@ export default {
       fr.readAsDataURL(file);
       fr.addEventListener("load", () => {
         this.uploadedImage = fr.result;
+        this.$emit("uploadImage", file);
       });
     }
   }

@@ -1,15 +1,15 @@
 <template>
   <div>
     <PetitionEditDialog
-      :showPetitionDetailsDialog.sync="showPetitionDetailsDialog"
+      :show-petition-details-dialog.sync="showPetitionDetailsDialog"
       :petition-id="petitionId"
       :is-edit-mode.sync="isEditMode"
-      :is-create="isCreate"
+      :is-create="false"
       @closeDialog="closeDialog"
     />
 
     <PetitionViewDialog
-      :showPetitionDetailsDialog.sync="showPetitionDetailsDialog"
+      :show-petition-details-dialog.sync="showPetitionDetailsDialog"
       :petition-id="petitionId"
       :is-edit-mode.sync="isEditMode"
       @closeDialog="closeDialog"
@@ -30,17 +30,14 @@ export default {
     PetitionViewDialog
   },
   props: {
-    //ダイアログ表示フラグ。
     showPetitionDetailsDialog: {
       type: Boolean,
       default: false
     },
-    //編集対象の呪文データ。新規作成の場合はnullを指定。
     petitionId: {
       type: Number,
       default: null
     },
-    //呪文を新規作成する場合のフラグ。
     isCreate: {
       type: Boolean,
       default: false
@@ -57,7 +54,6 @@ export default {
     petitionId: function(newPetitionId) {
       this.$store.dispatch(FETCH_PETITION, newPetitionId);
     },
-    //v-bindしている新規作成フラグが変更されたら、編集モードを変更する。
     isCreate: function(newIsCreate) {
       this.isEditMode = newIsCreate;
     }

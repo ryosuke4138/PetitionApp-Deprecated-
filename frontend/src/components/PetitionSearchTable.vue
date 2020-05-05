@@ -4,12 +4,12 @@
       v-for="(petition, i) in petitions"
       :key="i"
       :petition="petition"
-      :showPetitionDetailsDialog.sync="showPetitionDetailsDialog"
-      :targetPetitionId.sync="targetPetitionId"
+      :show-petition-details-dialog.sync="showPetitionDetailsDialog"
+      :target-petition-id.sync="targetPetitionId"
     />
     <PetitionDetailsDialog
-      :petitionId="targetPetitionId"
-      :showPetitionDetailsDialog.sync="showPetitionDetailsDialog"
+      :petition-id="targetPetitionId"
+      :show-petition-details-dialog.sync="showPetitionDetailsDialog"
     />
   </v-row>
   <!-- <v-container fluid grid-list-md>
@@ -35,7 +35,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { FETCH_PETITIONS } from "@/store/actions.type";
-import PetitionDetailsDialog from "@/components/PetitionDetailsDialog";
+import PetitionDetailsDialog from "@/components/dialog/PetitionDetailsDialog";
 import PetitionCard from "@/components/card/PetitionCard.vue";
 
 export default {

@@ -4,9 +4,8 @@
       class="white--text align-end"
       height="200px"
       :src="API_URL+'petitions/'+petition.petitionId+'/photo'"
-    >
-      <v-card-title>{{petition.title}}</v-card-title>
-    </v-img>
+    ></v-img>
+    <v-card-title class="cardTitle">{{petition.title}}</v-card-title>
     <v-card-subtitle class="pb-0">Signature Count: {{ petition.signatureCount }}</v-card-subtitle>
 
     <v-card-text class="text--primary">
@@ -16,7 +15,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn @click="openModal" text>Explore</v-btn>
+      <v-btn @click="openDialog" text>Explore</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -36,10 +35,13 @@ export default {
     isLoading: true
   }),
   methods: {
-    openModal() {
+    openDialog() {
       this.$emit("update:targetPetitionId", this.petition.petitionId);
       this.$emit("update:showPetitionDetailsDialog", true);
     }
   }
 };
 </script>
+
+<style scoped>
+</style>

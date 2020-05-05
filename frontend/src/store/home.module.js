@@ -71,7 +71,7 @@ const mutations = {
     state.isLoading = false;
   },
   [FETCH_CATEGORY_END](state, category) {
-    state.petitionCategory = category.map((c) => c.name);
+    state.petitionCategory = category;
     state.isLoading = false;
   },
   [UPDATE_PETITION_IN_LIST](state, data) {
