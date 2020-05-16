@@ -35,9 +35,10 @@
                   required
                 />
               </v-flex>
-              <!-- <v-flex md12>
-                <DatetimePicker :isCreate="isCreate" :petitionId="petitionId" />
-              </v-flex>-->
+              <v-flex md4>
+                <!-- <DatetimePicker v-if="isCreate" /> -->
+                <DatetimePicker />
+              </v-flex>
             </v-layout>
           </v-form>
         </v-container>
@@ -62,6 +63,7 @@ import {
   FETCH_PETITION_CATEGORY
 } from "@/store/actions.type";
 import InputImage from "@/components/ui/InputImage.vue";
+import DatetimePicker from "@/components/ui/DatetimePicker";
 import API_URL from "@/common/config";
 import {
   DO_RESET_PETITION,
@@ -71,7 +73,8 @@ import {
 
 export default {
   components: {
-    InputImage
+    InputImage,
+    DatetimePicker
   },
   props: {
     showPetitionDetailsDialog: {

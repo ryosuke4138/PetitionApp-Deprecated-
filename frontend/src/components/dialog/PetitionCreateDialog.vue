@@ -1,6 +1,7 @@
 <template>
   <div>
-    <CreateButton v-if="isAuthenticated" @click="openDialog" :disabled="disabledButton" />
+    <!-- <CreateButton v-if="isAuthenticated" @click="openDialog" :disabled="disabledButton" /> -->
+    <CreateButton @click="openDialog" :disabled="disabledButton" />
     <PetitionEditDialog
       :show-petition-details-dialog.sync="showPetitionCreateDialog"
       :is-edit-mode="true"

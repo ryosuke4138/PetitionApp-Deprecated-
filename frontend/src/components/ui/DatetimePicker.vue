@@ -1,204 +1,106 @@
 <template>
-  <v-dialog v-model="display" :width="dialogWidth">
-    <template v-slot:activator="{ on }">
-      <v-text-field
-        v-bind="textFieldProps"
-        :label="label"
-        :value="formattedDatetime"
-        v-on="on"
-        readonly
-      >
-        <template v-slot:progress>
-          <slot name="progress">
-            <v-progress-linear indeterminate absolute height="2" />
-          </slot>
-        </template>
-      </v-text-field>
-    </template>
-    <v-card>
-      <v-card-text>
-        <v-tabs fixed-tabs v-model="activeTab">
-          <v-tab key="calendar">
-            <slot name="dateIcon">
-              <v-icon>event</v-icon>
-            </slot>
-          </v-tab>
-          <v-tab key="timer" :disabled="dateSelected">
-            <slot name="timeIcon">
-              <v-icon>access_time</v-icon>
-            </slot>
-          </v-tab>
-          <v-tab-item key="calendar">
-            <v-date-picker
-              v-model="date"
-              v-bind="datePickerProps"
-              @input="showTimePicker"
-              full-width
-            ></v-date-picker>
-          </v-tab-item>
-          <v-tab-item key="timer">
-            <v-time-picker
-              ref="timer"
-              class="v-time-picker-custom"
+  <v-container>
+    <v-row>
+      <v-col cols="12" lg="6">
+        <v-menu
+          ref="menu1"
+          v-model="menu1"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-model="dateFormatted"
+              label="Date"
+              hint="MM/DD/YYYY format"
+              persistent-hint
+              prepend-icon="mdi-calendar"
+              @blur="date = parseDate(dateFormatted)"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            v-model="date"
+            no-title
+            @input="menu1 = false"
+          ></v-date-picker>
+        </v-menu>
+        <p>
+          Date in ISO format:
+          <strong>{{ date }}</strong>
+        </p>
+      </v-col>
+      <v-col cols="11" sm="5">
+        <v-dialog
+          ref="dialog"
+          v-model="modal2"
+          :return-value.sync="time"
+          persistent
+          width="290px"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
               v-model="time"
-              v-bind="timePickerProps"
-              full-width
-            ></v-time-picker>
-          </v-tab-item>
-        </v-tabs>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <slot name="actions" :parent="this">
-          <v-btn color="grey lighten-1" text @click.native="clearHandler">{{ clearText }}</v-btn>
-          <v-btn color="green darken-1" text @click="okHandler">{{ okText }}</v-btn>
-        </slot>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+              label="End Time"
+              prepend-icon="mdi-clock"
+              readonly
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-time-picker v-if="modal2" v-model="time" full-width>
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="modal2 = false">Cancel</v-btn>
+            <v-btn text color="primary" @click="$refs.dialog.save(time)"
+              >OK</v-btn
+            >
+          </v-time-picker>
+        </v-dialog>
+      </v-col>
+
+      <v-col cols="12" lg="6"></v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import { format, parse } from "date-fns";
-const DEFAULT_DATE = "";
-const DEFAULT_TIME = "00:00:00";
-const DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-const DEFAULT_TIME_FORMAT = "HH:mm:ss";
-const DEFAULT_DIALOG_WIDTH = 340;
-const DEFAULT_CLEAR_TEXT = "CLEAR";
-const DEFAULT_OK_TEXT = "OK";
 export default {
-  name: "v-datetime-picker",
-  model: {
-    prop: "datetime",
-    event: "input"
-  },
-  props: {
-    datetime: {
-      type: [Date, String],
-      default: null
-    },
-    disabled: {
-      type: Boolean
-    },
-    loading: {
-      type: Boolean
-    },
-    label: {
-      type: String,
-      default: ""
-    },
-    dialogWidth: {
-      type: Number,
-      default: DEFAULT_DIALOG_WIDTH
-    },
-    dateFormat: {
-      type: String,
-      default: DEFAULT_DATE_FORMAT
-    },
-    timeFormat: {
-      type: String,
-      default: "HH:mm"
-    },
-    clearText: {
-      type: String,
-      default: DEFAULT_CLEAR_TEXT
-    },
-    okText: {
-      type: String,
-      default: DEFAULT_OK_TEXT
-    },
-    textFieldProps: {
-      type: Object
-    },
-    datePickerProps: {
-      type: Object
-    },
-    timePickerProps: {
-      type: Object
-    }
-  },
-  data() {
-    return {
-      display: false,
-      activeTab: 0,
-      date: DEFAULT_DATE,
-      time: DEFAULT_TIME
-    };
-  },
-  mounted() {
-    this.init();
-  },
+  data: (vm) => ({
+    date: new Date().toISOString().substr(0, 10),
+    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+    time: null,
+    menu1: false,
+    menu2: false,
+    modal2: false,
+  }),
+
   computed: {
-    dateTimeFormat() {
-      return this.dateFormat + " " + this.timeFormat;
+    computedDateFormatted() {
+      return this.formatDate(this.date);
     },
-    defaultDateTimeFormat() {
-      return DEFAULT_DATE_FORMAT + " " + DEFAULT_TIME_FORMAT;
-    },
-    formattedDatetime() {
-      return this.selectedDatetime
-        ? format(this.selectedDatetime, this.dateTimeFormat)
-        : "";
-    },
-    selectedDatetime() {
-      if (this.date && this.time) {
-        let datetimeString = this.date + " " + this.time;
-        if (this.time.length === 5) {
-          datetimeString += ":00";
-        }
-        return parse(datetimeString, this.defaultDateTimeFormat, new Date());
-      } else {
-        return null;
-      }
-    },
-    dateSelected() {
-      return !this.date;
-    }
   },
-  methods: {
-    init() {
-      if (!this.datetime) {
-        return;
-      }
-      let initDateTime;
-      if (this.datetime instanceof Date) {
-        initDateTime = this.datetime;
-      } else if (
-        typeof this.datetime === "string" ||
-        this.datetime instanceof String
-      ) {
-        // see https://stackoverflow.com/a/9436948
-        initDateTime = parse(this.datetime, this.dateTimeFormat, new Date());
-      }
-      this.date = format(initDateTime, DEFAULT_DATE_FORMAT);
-      this.time = format(initDateTime, DEFAULT_TIME_FORMAT);
-    },
-    okHandler() {
-      this.resetPicker();
-      this.$emit("input", this.selectedDatetime);
-    },
-    clearHandler() {
-      this.resetPicker();
-      this.date = DEFAULT_DATE;
-      this.time = DEFAULT_TIME;
-      this.$emit("input", null);
-    },
-    resetPicker() {
-      this.display = false;
-      this.activeTab = 0;
-      if (this.$refs.timer) {
-        this.$refs.timer.selectingHour = true;
-      }
-    },
-    showTimePicker() {
-      this.activeTab = 1;
-    }
-  },
+
   watch: {
-    datetime: function() {
-      this.init();
-    }
-  }
+    date() {
+      this.dateFormatted = this.formatDate(this.date);
+    },
+  },
+
+  methods: {
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${month}/${day}/${year}`;
+    },
+    parseDate(date) {
+      if (!date) return null;
+
+      const [month, day, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    },
+  },
 };
 </script>
