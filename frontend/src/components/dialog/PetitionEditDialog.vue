@@ -10,6 +10,7 @@
                   :petitionId="petitionId"
                   :isCreate="isCreate"
                   @uploadImage="(file) => this.imageFile = file"
+                  ref="image"
                 />
               </v-flex>
               <v-flex md4>
@@ -36,8 +37,7 @@
                 />
               </v-flex>
               <v-flex md4>
-                <!-- <DatetimePicker v-if="isCreate" /> -->
-                <DatetimePicker />
+                <AddDateButton @date="setDate" ref="dateButton" />
               </v-flex>
             </v-layout>
           </v-form>
@@ -48,7 +48,6 @@
         <v-spacer></v-spacer>
         <v-btn color="green darken-1" text @click.native="save">Save</v-btn>
         <v-btn color="green darken-1" text @click.native="cancel">Cancel</v-btn>
-        <v-btn v-if="!isCreate" color="green darken-1" text @click.native="remove">Delete</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -57,13 +56,12 @@
 <script>
 import { mapGetters } from "vuex";
 import {
-  FETCH_PETITION,
   FETCH_PETITIONS,
-  DELETE_PETITION,
-  FETCH_PETITION_CATEGORY
+  FETCH_PETITION_CATEGORY,
+  SIGN_PETITION
 } from "@/store/actions.type";
 import InputImage from "@/components/ui/InputImage.vue";
-import DatetimePicker from "@/components/ui/DatetimePicker";
+import AddDateButton from "@/components/ui/AddDateButton";
 import API_URL from "@/common/config";
 import {
   DO_RESET_PETITION,
@@ -74,7 +72,7 @@ import {
 export default {
   components: {
     InputImage,
-    DatetimePicker
+    AddDateButton
   },
   props: {
     showPetitionDetailsDialog: {
@@ -101,6 +99,7 @@ export default {
     title: "",
     description: "",
     category: null,
+    date: null,
     newPetition: {}
   }),
   computed: {
@@ -111,11 +110,6 @@ export default {
     this.$store.dispatch(FETCH_PETITION_CATEGORY);
   },
   watch: {
-    petitionId: function(val) {
-      if (val) {
-        this.$store.dispatch(FETCH_PETITION, val);
-      }
-    },
     petitionCategory: function(val) {
       this.petitionCategoryName = val.map(c => c.name);
     },
@@ -133,17 +127,21 @@ export default {
       this.newPetition.categoryId = this.petitionCategory.find(
         c => c.name == this.category
       ).categoryId;
+      if (this.date) this.newPetition.date = this.date;
       this.$store
         .dispatch(PUBLISH_PETITION, this.newPetition)
         .then(({ data }) => {
-          this.putPhoto(data.petitionId);
-          this.$emit("closeDialog");
-          this.$emit("update:isEditMode", false);
-          this.$store.dispatch(FETCH_PETITIONS);
-          this.init();
+          this.$store.dispatch(SIGN_PETITION, data.petitionId).then(() => {
+            this.putPhoto(data.petitionId).then(() => {
+              this.$emit("closeDialog");
+              this.$emit("update:isEditMode", false);
+              this.$store.dispatch(FETCH_PETITIONS);
+              this.init();
+            });
+          });
         })
-        .catch(() => {
-          console.log("error");
+        .catch(err => {
+          console.log(err);
         });
     },
     cancel() {
@@ -154,17 +152,15 @@ export default {
       // this.$emit("cancel", this.spell);
       // this.spell = this.defaultData();
     },
-    remove() {
-      this.$store.dispatch(DELETE_PETITION, this.petitionId);
-      this.$emit("closeDialog");
-      this.$emit("update:isEditMode", false);
-    },
-    putPhoto(petitionId) {
+    async putPhoto(petitionId) {
       this.$store.dispatch(PUT_PETITION_PHOTO, {
         petitionId: petitionId,
         image: this.imageFile,
         imageType: this.imageFile.type
       });
+    },
+    setDate(date) {
+      this.date = date;
     },
     init() {
       this.imageFile = null;
@@ -172,6 +168,8 @@ export default {
       this.description = "";
       this.category = null;
       this.newPetition = {};
+      this.$refs.dateButton.closeDatePicker();
+      this.$refs.image.resetUploadedImage();
     }
   }
 };

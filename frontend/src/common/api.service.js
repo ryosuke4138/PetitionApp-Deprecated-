@@ -43,6 +43,12 @@ const ApiService = {
       throw new Error(`ApiService ${error}`);
     });
   },
+
+  getSignatures(slug) {
+    return Vue.axios.get(`petitions/${slug}/signatures`).catch((error) => {
+      throw new Error(`ApiService ${error}`);
+    });
+  },
 };
 
 export default ApiService;
@@ -68,6 +74,18 @@ export const PetitionsService = {
   },
   updatePhoto(slug, params, imageType) {
     return ApiService.putPhoto(`petitions/${slug}/photo`, params, imageType);
+  },
+};
+
+export const SignaturesService = {
+  get(slug) {
+    return ApiService.getSignatures(slug);
+  },
+  sign(slug) {
+    return ApiService.post(`petitions/${slug}/signatures`, null);
+  },
+  unsign(slug) {
+    return ApiService.delete(`petitions/${slug}/signatures`);
   },
 };
 

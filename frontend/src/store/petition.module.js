@@ -1,4 +1,4 @@
-import { PetitionsService } from "@/common/api.service";
+import { PetitionsService, SignaturesService } from "@/common/api.service";
 import {
   DO_RESET_PETITION,
   FETCH_PETITION,
@@ -6,14 +6,22 @@ import {
   UPDATE_PETITION,
   PUBLISH_PETITION,
   PUT_PETITION_PHOTO,
+  FETCH_SIGNATURES,
+  SIGN_PETITION,
+  UNSIGN_PETITION,
 } from "@/store/actions.type";
-import { SET_PETITION, RESET_PETITION } from "@/store/mutations.type";
+import {
+  SET_PETITION,
+  RESET_PETITION,
+  SET_SIGNATORIES,
+} from "@/store/mutations.type";
 
 const initialState = {
   petition: {
     petitionId: null,
     title: null,
     category: null,
+    authorId: null,
     authorName: null,
     signatureCount: null,
     description: null,
@@ -22,16 +30,13 @@ const initialState = {
     createdDate: null,
     closingDate: null,
   },
+  signatories: [],
 };
 
 export const state = { ...initialState };
 
 export const actions = {
-  async [FETCH_PETITION](context, slug, prevPetition) {
-    // avoid extronuous network call if petition exists
-    if (prevPetition !== undefined) {
-      return context.commit(SET_PETITION, prevPetition);
-    }
+  async [FETCH_PETITION](context, slug) {
     const { data } = await PetitionsService.get(slug);
     context.commit(SET_PETITION, data);
     return data;
@@ -59,12 +64,26 @@ export const actions = {
       data.imageType
     );
   },
+  async [FETCH_SIGNATURES](context, slug) {
+    const { data } = await SignaturesService.get(slug);
+    context.commit(SET_SIGNATORIES, data);
+    return data;
+  },
+  async [SIGN_PETITION](context, slug) {
+    await SignaturesService.sign(slug);
+  },
+  async [UNSIGN_PETITION](context, slug) {
+    await SignaturesService.unsign(slug);
+  },
 };
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
   [SET_PETITION](state, petition) {
     state.petition = petition;
+  },
+  [SET_SIGNATORIES](state, signatories) {
+    state.signatories = signatories;
   },
   [RESET_PETITION](state) {
     state.petition = initialState.petition;

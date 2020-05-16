@@ -64,6 +64,9 @@ export default {
         this.uploadedImage = fr.result;
         this.$emit("uploadImage", file);
       });
+    },
+    resetUploadedImage() {
+      this.uploadedImage = "";
     }
   }
 };

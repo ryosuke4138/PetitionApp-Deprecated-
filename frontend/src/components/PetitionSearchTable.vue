@@ -8,7 +8,7 @@
       :target-petition-id.sync="targetPetitionId"
     />
     <PetitionDetailsDialog
-      :petition-id="targetPetitionId"
+      :petition-id.sync="targetPetitionId"
       :show-petition-details-dialog.sync="showPetitionDetailsDialog"
     />
   </v-row>
@@ -45,7 +45,7 @@ export default {
   },
   data: () => ({
     showPetitionDetailsDialog: false,
-    targetPetitionId: null
+    targetPetitionId: null,
   }),
   mounted() {
     this.$store.dispatch(FETCH_PETITIONS);

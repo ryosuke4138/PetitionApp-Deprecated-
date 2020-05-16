@@ -43,9 +43,10 @@
       </v-layout>
       <v-card-actions>
         <v-spacer></v-spacer>
+        <v-btn v-if="isAuthor" color="green darken-1" text @click.native="edit">Edit</v-btn>
+        <v-btn v-if="isAuthor" color="green darken-1" text @click.native="editTag">Edit Tag</v-btn>
+        <v-btn v-if="isAuthor" color="green darken-1" text @click.native="remove">Delete</v-btn>
         <v-btn color="green darken-1" text @click.native="close">Close</v-btn>
-        <v-btn v-if="showEditButton" color="green darken-1" text @click.native="edit">Edit</v-btn>
-        <v-btn v-if="showEditButton" color="green darken-1" text @click.native="editTag">Edit Tag</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -53,7 +54,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { FETCH_PETITION } from "@/store/actions.type";
+import { DELETE_PETITION, FETCH_PETITIONS } from "@/store/actions.type";
 import API_URL from "@/common/config";
 
 export default {
@@ -76,17 +77,12 @@ export default {
   }),
   computed: {
     ...mapGetters(["petition", "isAuthenticated", "user"]),
-    showEditButton: function() {
+    isAuthor: function() {
       return (
-        !this.isCreate &&
+        !this.isEditMode &&
         this.isAuthenticated &&
-        this.user.usreId == this.petitionId
+        this.user.userId == this.petition.authorId
       );
-    }
-  },
-  watch: {
-    petitionId: function(newPetitionId) {
-      this.$store.dispatch(FETCH_PETITION, newPetitionId);
     }
   },
   methods: {
@@ -98,6 +94,13 @@ export default {
       this.$emit("closeDialog");
       // this.$emit("close", this.spell);
       // this.spell = this.defaultData();
+    },
+    remove() {
+      this.$store.dispatch(DELETE_PETITION, this.petitionId).then(() => {
+        this.$store.dispatch(FETCH_PETITIONS);
+        this.$emit("closeDialog");
+        this.$emit("update:isEditMode", false);
+      });
     }
   }
 };

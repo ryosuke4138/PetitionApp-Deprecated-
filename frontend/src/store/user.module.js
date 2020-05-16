@@ -34,9 +34,11 @@ const actions = {
       const { data } = await UserService.login(credentials);
       const result = await UserService.get(data.userId);
       commit(SET_AUTH, data.token);
-      commit(SET_USER, result.data);
       ApiService.setHeader(data.token);
-      return result.data;
+      let userObj = result.data;
+      userObj.userId = data.userId;
+      commit(SET_USER, userObj);
+      return userObj;
     } catch {
       commit(SET_ERROR, "Could not login");
     }

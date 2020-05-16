@@ -11,6 +11,9 @@ export const LOGOUT = "logout";
 export const REGISTER = "register";
 export const FETCH_USER = "fetchUser";
 export const UPDATE_USER = "updateUser";
+export const FETCH_SIGNATURES = "fetchSignatures";
+export const SIGN_PETITION = "signPetition";
+export const UNSIGN_PETITION = "unsignPetition";
 
 // export const ARTICLE_PUBLISH = "publishArticle";
 // export const ARTICLE_DELETE = "deleteArticle";
