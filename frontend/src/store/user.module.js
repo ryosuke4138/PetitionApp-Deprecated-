@@ -6,6 +6,7 @@ import {
   REGISTER,
   FETCH_USER,
   UPDATE_USER,
+  FETCH_USER_PHOTO,
 } from "./actions.type";
 import { SET_AUTH, PURGE_AUTH, SET_ERROR, SET_USER } from "./mutations.type";
 
@@ -69,7 +70,9 @@ const actions = {
   },
   async [UPDATE_USER](context, userId, userDetails) {
     await UserService.update(userId, userDetails);
-    console.log("user updated");
+  },
+  async [FETCH_USER_PHOTO](context, userId) {
+    return await UserService.getPhoto(userId);
   },
   // [UPDATE_USER](context, payload) {
   //   const { email, username, password, image, bio } = payload;

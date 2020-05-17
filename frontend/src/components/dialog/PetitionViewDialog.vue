@@ -5,49 +5,42 @@
         class="white--text align-end"
         max-height="400px"
         :src="API_URL+'petitions/'+petitionId+'/photo'"
-      >
-        <v-card-title>{{petition.title}}</v-card-title>
-      </v-img>
-      <v-divider></v-divider>
-      <v-layout row wrap>
-        <v-flex xs3>
-          <v-subheader class="body-2">Category</v-subheader>
-        </v-flex>
-        <v-flex xs3>
-          <v-subheader class="body-2">Author Name</v-subheader>
-        </v-flex>
-        <v-flex xs3>
-          <v-subheader class="body-2">Author City</v-subheader>
-        </v-flex>
-        <v-flex xs3>
-          <v-subheader class="body-2">Author Country</v-subheader>
-        </v-flex>
-        <v-flex xs3>
-          <v-card-text class="body-2">{{ petition.category}}</v-card-text>
-        </v-flex>
-        <v-flex xs3>
-          <v-card-text class="body-2">{{ petition.authorName }}</v-card-text>
-        </v-flex>
-        <v-flex xs3>
-          <v-card-text class="body-2">{{ petition.authorCity}}</v-card-text>
-        </v-flex>
-        <v-flex xs3>
-          <v-card-text class="body-2">{{petition.authorCountry}}</v-card-text>
-        </v-flex>
-        <v-flex xs12>
-          <v-divider />
-          <v-card-text class="body-2">
-            <span style="white-space: pre-wrap;">{{petition.description}}</span>
-          </v-card-text>
-        </v-flex>
-      </v-layout>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn v-if="isAuthor" color="green darken-1" text @click.native="edit">Edit</v-btn>
-        <v-btn v-if="isAuthor" color="green darken-1" text @click.native="editTag">Edit Tag</v-btn>
-        <v-btn v-if="isAuthor" color="green darken-1" text @click.native="remove">Delete</v-btn>
-        <v-btn color="green darken-1" text @click.native="close">Close</v-btn>
-      </v-card-actions>
+      ></v-img>
+      <v-card-title>
+        {{petition.title}}
+        <v-subheader class="pa-2" tile outlined>{{ petition.displayDate }}</v-subheader>
+        <v-spacer />
+        <v-subheader class="pa-2" tile outlined>{{ petition.category}}</v-subheader>
+        <v-subheader class="pa-2" tile outlined>Signature Count {{ petition.signatureCount}}</v-subheader>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn v-if="isAuthor" color="green darken-1" text @click.native="edit">Edit</v-btn>
+          <v-btn v-if="isAuthor" color="green darken-1" text @click.native="editTag">Edit Tag</v-btn>
+          <v-btn v-if="isAuthor" color="green darken-1" text @click.native="remove">Delete</v-btn>
+          <v-btn color="green darken-1" text @click.native="close">Close</v-btn>
+        </v-card-actions>
+      </v-card-title>
+      <v-divider />
+
+      <v-row class="mb-6" no-gutters>
+        <v-subheader class="pa-2" tile outlined>
+          <UserAvatar :userId="petition.authorId" />
+          {{ petition.authorName }} {{ petition.authorCity }} {{ petition.authorCountry }}
+        </v-subheader>
+      </v-row>
+      <v-row class="mb-12" no-gutters>
+        <v-subheader class="pa-2" tile outlined>{{ petition.description }}</v-subheader>
+      </v-row>
+      <v-divider />
+      <v-subheader class="pa-2" tile outlined>List of Signatories</v-subheader>
+      <v-row v-for="(signatory, i) in signatories" :key="i" no-gutters>
+        <v-col>
+          <v-subheader class="pa-2">
+            <UserAvatar :userId="signatory.signatoryId" />
+            {{ signatory.name }} {{ signatory.display }}
+          </v-subheader>
+        </v-col>
+      </v-row>
     </v-card>
   </v-dialog>
 </template>
@@ -55,9 +48,13 @@
 <script>
 import { mapGetters } from "vuex";
 import { DELETE_PETITION, FETCH_PETITIONS } from "@/store/actions.type";
+import UserAvatar from "@/components/ui/UserAvatar";
 import API_URL from "@/common/config";
 
 export default {
+  components: {
+    UserAvatar
+  },
   props: {
     showPetitionDetailsDialog: {
       type: Boolean,
@@ -76,7 +73,7 @@ export default {
     API_URL: API_URL
   }),
   computed: {
-    ...mapGetters(["petition", "isAuthenticated", "user"]),
+    ...mapGetters(["petition", "isAuthenticated", "user", "signatories"]),
     isAuthor: function() {
       return (
         !this.isEditMode &&

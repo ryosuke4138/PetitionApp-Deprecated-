@@ -90,9 +90,33 @@ export const mutations = {
   },
 };
 
+function formatDate(date) {
+  if (!date) return "(not set yet)";
+  const [year, month, day] = date.substr(0, 10).split("-");
+  return `${month}/${day}/${year}`;
+}
+
 const getters = {
   petition(state) {
+    state.petition.displayDate =
+      formatDate(state.petition.createdDate) +
+      " - " +
+      formatDate(state.petition.closingDate);
     return state.petition;
+  },
+  signatories(state) {
+    state.signatories = state.signatories.map((signatory) => {
+      if (signatory.city && signatory.country) {
+        signatory.display = signatory.city + ", " + signatory.country;
+      } else {
+        signatory.display = signatory.city + signatory.country;
+      }
+      signatory.display = signatory.display
+        ? "(" + signatory.display + ")"
+        : "";
+      return signatory;
+    });
+    return state.signatories;
   },
 };
 

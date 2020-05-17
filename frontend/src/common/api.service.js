@@ -38,6 +38,10 @@ const ApiService = {
     return Vue.axios.put(`${resource}`, params, { headers });
   },
 
+  getPhoto(resource) {
+    return Vue.axios.get(resource);
+  },
+
   delete(resource) {
     return Vue.axios.delete(resource).catch((error) => {
       throw new Error(`ApiService ${error}`);
@@ -101,5 +105,8 @@ export const UserService = {
   },
   update(slug, params) {
     return ApiService.put("users", slug, params);
+  },
+  getPhoto(slug) {
+    return ApiService.getPhoto(`users/${slug}/photo`);
   },
 };

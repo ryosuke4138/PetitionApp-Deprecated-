@@ -23,6 +23,7 @@ import { FETCH_PETITION } from "@/store/actions.type";
 import API_URL from "@/common/config";
 import PetitionEditDialog from "@/components/dialog/PetitionEditDialog.vue";
 import PetitionViewDialog from "@/components/dialog/PetitionViewDialog.vue";
+import { FETCH_SIGNATURES } from "../../store/actions.type";
 
 export default {
   components: {
@@ -53,6 +54,7 @@ export default {
   watch: {
     petitionId: function(newPetitionId) {
       this.$store.dispatch(FETCH_PETITION, newPetitionId);
+      this.$store.dispatch(FETCH_SIGNATURES, newPetitionId);
     },
     isCreate: function(newIsCreate) {
       this.isEditMode = newIsCreate;
