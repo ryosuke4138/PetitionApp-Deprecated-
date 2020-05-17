@@ -12,16 +12,6 @@ const router = new Router({
       name: "home",
       component: () => import("@/views/Home"),
     },
-    {
-      name: "login",
-      path: "/login",
-      component: () => import("@/views/auth/Login"),
-    },
-    {
-      name: "register",
-      path: "/register",
-      component: () => import("@/views/auth/Register"),
-    },
     // {
     //   name: "petitionDetails",
     //   path: "/petition/:petitionId",

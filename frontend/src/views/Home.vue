@@ -1,19 +1,20 @@
 <template>
-  <home-layout>
+  <v-app>
+    <NavBar />
     <PetitionCreateDialog />
     <PetitionSearchTable />
-  </home-layout>
+  </v-app>
 </template>
 
 <script>
-import HomeLayout from "@/layouts/Home";
+import NavBar from "@/components/NavBar";
 import PetitionSearchTable from "@/components/PetitionSearchTable";
 import PetitionCreateDialog from "@/components/dialog/PetitionCreateDialog";
 
 export default {
   name: "home",
   components: {
-    HomeLayout,
+    NavBar,
     PetitionSearchTable,
     PetitionCreateDialog
   }

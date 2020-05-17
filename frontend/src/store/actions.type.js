@@ -4,6 +4,7 @@ export const DELETE_PETITION = "deletePetition";
 export const UPDATE_PETITION = "updatePetition";
 export const PUBLISH_PETITION = "publishPetition";
 export const PUT_PETITION_PHOTO = "putPetitionPhoto";
+export const PUT_USER_PHOTO = "putUserPhoto";
 export const FETCH_PETITIONS = "fetchPetitions";
 export const FETCH_PETITION_CATEGORY = "fetchPetitionCateogy";
 export const LOGIN = "login";
@@ -15,6 +16,7 @@ export const FETCH_USER_PHOTO = "fetchUserPhoto";
 export const FETCH_SIGNATURES = "fetchSignatures";
 export const SIGN_PETITION = "signPetition";
 export const UNSIGN_PETITION = "unsignPetition";
+export const RESET_ERROR = "resetError";
 
 // export const ARTICLE_PUBLISH = "publishArticle";
 // export const ARTICLE_DELETE = "deleteArticle";

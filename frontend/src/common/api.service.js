@@ -109,4 +109,7 @@ export const UserService = {
   getPhoto(slug) {
     return ApiService.getPhoto(`users/${slug}/photo`);
   },
+  updatePhoto(slug, params, imageType) {
+    return ApiService.putPhoto(`users/${slug}/photo`, params, imageType);
+  },
 };

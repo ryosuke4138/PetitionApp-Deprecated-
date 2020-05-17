@@ -7,6 +7,8 @@ import {
   FETCH_USER,
   UPDATE_USER,
   FETCH_USER_PHOTO,
+  RESET_ERROR,
+  PUT_USER_PHOTO,
 } from "./actions.type";
 import { SET_AUTH, PURGE_AUTH, SET_ERROR, SET_USER } from "./mutations.type";
 
@@ -41,7 +43,7 @@ const actions = {
       commit(SET_USER, userObj);
       return userObj;
     } catch {
-      commit(SET_ERROR, "Could not login");
+      commit(SET_ERROR, "Failed to login");
     }
   },
   [LOGOUT]({ commit }) {
@@ -50,11 +52,11 @@ const actions = {
   async [REGISTER]({ commit }, credentials) {
     try {
       const { data } = await UserService.register(credentials);
-      const result = await UserService.get(data.userId);
       commit(SET_AUTH);
-      return result.data;
+      return data.userId;
     } catch {
-      commit(SET_ERROR, "Could not register");
+      commit(SET_ERROR, "Failed to register");
+      return null;
     }
   },
   async [FETCH_USER]({ commit }, userId) {
@@ -64,7 +66,6 @@ const actions = {
       commit(SET_USER, data);
       return data;
     } catch (response) {
-      commit(SET_ERROR, response.data.errors);
       return response;
     }
   },
@@ -73,6 +74,12 @@ const actions = {
   },
   async [FETCH_USER_PHOTO](context, userId) {
     return await UserService.getPhoto(userId);
+  },
+  [RESET_ERROR]({ commit }) {
+    commit(SET_ERROR, null);
+  },
+  async [PUT_USER_PHOTO](context, data) {
+    await UserService.updatePhoto(data.userId, data.image, data.imageType);
   },
   // [UPDATE_USER](context, payload) {
   //   const { email, username, password, image, bio } = payload;
@@ -102,13 +109,13 @@ const mutations = {
   },
   [SET_AUTH](state, token) {
     state.isAuthenticated = true;
-    state.errors = {};
+    state.errors = null;
     state.token = token;
   },
   [PURGE_AUTH](state) {
     state.isAuthenticated = false;
     state.user = {};
-    state.errors = {};
+    state.errors = null;
     state.token = "";
   },
 };
