@@ -35,15 +35,15 @@ const actions = {
   async [LOGIN]({ commit }, credentials) {
     try {
       const { data } = await UserService.login(credentials);
-      const result = await UserService.get(data.userId);
       commit(SET_AUTH, data.token);
       ApiService.setHeader(data.token);
+      const result = await UserService.get(data.userId);
       let userObj = result.data;
       userObj.userId = data.userId;
       commit(SET_USER, userObj);
       return userObj;
     } catch {
-      commit(SET_ERROR, "Failed to login");
+      commit(SET_ERROR, "Wrong Credentials. Please Try Again.");
     }
   },
   [LOGOUT]({ commit }) {
