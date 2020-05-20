@@ -9,3 +9,4 @@ export const FETCH_START = "fetchStart";
 export const FETCH_PETITIONS_END = "fetchPetitionsEnd";
 export const FETCH_CATEGORY_END = "fetchCategoryEnd";
 export const UPDATE_PETITION_IN_LIST = "updatePetitionInList";
+export const UPDATE_PAGE_NUMBER = "updatePageNumber";

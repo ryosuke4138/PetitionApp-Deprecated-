@@ -1,10 +1,15 @@
-import { FETCH_PETITIONS, FETCH_PETITION_CATEGORY } from "./actions.type";
+import {
+  FETCH_PETITIONS,
+  FETCH_PETITION_CATEGORY,
+  SET_PAGE,
+} from "./actions.type";
 import { PetitionsService } from "@/common/api.service";
 import {
   FETCH_START,
   FETCH_PETITIONS_END,
   FETCH_CATEGORY_END,
   UPDATE_PETITION_IN_LIST,
+  UPDATE_PAGE_NUMBER,
 } from "./mutations.type";
 
 // the petitions should have those value
@@ -19,6 +24,7 @@ const state = {
   petitions: [],
   isLoading: true,
   petitionCount: 0,
+  page: 1,
   petitionCategory: [],
 };
 
@@ -34,6 +40,9 @@ const getters = {
   },
   petitionCategory(state) {
     return state.petitionCategory;
+  },
+  page(state) {
+    return state.page;
   },
 };
 
@@ -57,6 +66,9 @@ const actions = {
       .catch((error) => {
         throw new Error(error);
       });
+  },
+  [SET_PAGE]({ commit }, val) {
+    commit(UPDATE_PAGE_NUMBER, val);
   },
 };
 
@@ -86,6 +98,9 @@ const mutations = {
       // article.favoritesCount = data.favoritesCount;
       return petition;
     });
+  },
+  [UPDATE_PAGE_NUMBER](state, val) {
+    state.page = val;
   },
 };
 

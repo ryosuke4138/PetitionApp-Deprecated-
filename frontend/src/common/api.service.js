@@ -58,8 +58,12 @@ const ApiService = {
 export default ApiService;
 
 export const PetitionsService = {
-  query(params) {
-    return ApiService.query("petitions", params);
+  query(q) {
+    if (q) {
+      return ApiService.query("petitions", { params: q });
+    } else {
+      return ApiService.query("petitions", null);
+    }
   },
   get(slug) {
     return ApiService.get("petitions", slug);

@@ -29,9 +29,9 @@
 
 <script>
 export default {
-  data: vm => ({
-    date: new Date().toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+  data: () => ({
+    date: null,
+    dateFormatted: null,
     menu1: false,
     currentDate: new Date().toISOString().substr(0, 10)
   }),
@@ -41,15 +41,19 @@ export default {
       return this.formatDate(this.date);
     }
   },
-
+  created: function() {
+    const tommorow = new Date();
+    tommorow.setDate(tommorow.getDate() + 1);
+    this.date = tommorow.toISOString().substr(0, 10);
+    this.dateFormatted = this.formatDate(tommorow.toISOString().substr(0, 10));
+    this.$emit("set", this.parseDate(this.dateFormatted) + " 00:00:00.000");
+  },
   watch: {
     date() {
-      console.log(this.date);
       this.dateFormatted = this.formatDate(this.date);
-      this.$emit("date", this.parseDate(this.dateFormatted) + " 00:00:00:000");
+      this.$emit("set", this.parseDate(this.dateFormatted) + " 00:00:00.000");
     }
   },
-
   methods: {
     formatDate(date) {
       if (!date) return null;
@@ -63,7 +67,11 @@ export default {
       const [month, day, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
-    allowedDates: val => new Date() <= new Date(val)
+    allowedDates: val => {
+      // const date = ;
+      // date.setDate(date.getDate() + 1);
+      return new Date() < new Date(val);
+    }
   }
 };
 </script>

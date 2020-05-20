@@ -13,7 +13,7 @@
         height="200px"
         :src="API_URL+'petitions/'+petitionId+'/photo'"
       />
-      <v-img v-else class="white--text align-end" :src="uploadedImage" />
+      <v-img v-if="uploadedImage" class="white--text align-end" :src="uploadedImage" />
       <v-file-input
         v-model="uploadedImageFile"
         accept="image/png, image/jpeg, image/jpg, image/gif"
@@ -52,6 +52,13 @@ export default {
         "Image should be less than 50 MB, sorry"
     ]
   }),
+  watch: {
+    uploadedImageFile: function(val) {
+      if (!val) {
+        this.uploadedImage = "";
+      }
+    }
+  },
   methods: {
     onFileChange(file) {
       if (!file || file.name.lastIndexOf(".") <= 0) {
@@ -66,7 +73,7 @@ export default {
       });
     },
     resetUploadedImage() {
-      this.uploadedImage = "";
+      this.uploadedImageFile = null;
     }
   }
 };

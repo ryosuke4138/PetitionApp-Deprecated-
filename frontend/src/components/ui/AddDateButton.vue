@@ -2,8 +2,8 @@
   <div>
     <v-btn v-if="!isOpenDatePicker" @click="openDatePicker">Add Closing Date</v-btn>
     <div v-if="isOpenDatePicker">
-      <DatePicker @date="setDate" />
-      <v-btn @click="closeDatePicker">Cancel Input Date</v-btn>
+      <DatePicker @set="setDate" />
+      <v-btn @click="cancelDatePicker">Cancel Input Date</v-btn>
     </div>
   </div>
 </template>
@@ -21,12 +21,12 @@ export default {
     openDatePicker() {
       this.isOpenDatePicker = true;
     },
-    closeDatePicker() {
+    cancelDatePicker() {
       this.isOpenDatePicker = false;
-      this.$emit("date", null);
+      this.$emit("set", null);
     },
     setDate(date) {
-      this.$emit("date", date);
+      this.$emit("set", date);
     }
   }
 };

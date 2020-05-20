@@ -29,6 +29,7 @@ export default {
   },
   methods: {
     getImage(userId) {
+      if (!userId) return;
       this.$store
         .dispatch(FETCH_USER_PHOTO, userId)
         .then(() => {
