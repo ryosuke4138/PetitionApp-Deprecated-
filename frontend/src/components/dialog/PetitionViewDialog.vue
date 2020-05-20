@@ -34,7 +34,9 @@
       <v-row no-gutters>
         <v-subheader class="pa-2" tile outlined>
           Author:
-          <UserAvatar :userId="petition.authorId" />
+          <v-avatar size="36">
+            <UserImage :userId="petition.authorId" />
+          </v-avatar>
           <!-- TODO: FIX for the case that city and/or country is null -->
           {{ petition.authorName }} ({{ petition.authorCity }},
           {{ petition.authorCountry }})
@@ -48,7 +50,9 @@
       <v-row v-for="(signatory, i) in signatories" :key="i" no-gutters>
         <v-col>
           <v-subheader class="pa-2">
-            <UserAvatar :userId="signatory.signatoryId" />
+            <v-avatar size="36">
+              <UserImage :userId="signatory.signatoryId" />
+            </v-avatar>
             {{ signatory.name }} {{ signatory.display }}
           </v-subheader>
         </v-col>
@@ -60,14 +64,14 @@
 <script>
 import { mapGetters } from "vuex";
 import { DELETE_PETITION, FETCH_PETITIONS } from "@/store/actions.type";
-import UserAvatar from "@/components/ui/UserAvatar";
+import UserImage from "@/components/ui/UserImage";
 import SignButton from "@/components/ui/SignButton";
 import SocialSharingButton from "@/components/ui/SocialSharingButton";
 import API_URL from "@/common/config";
 
 export default {
   components: {
-    UserAvatar,
+    UserImage,
     SignButton,
     SocialSharingButton
   },
@@ -93,7 +97,13 @@ export default {
     API_URL: API_URL
   }),
   computed: {
-    ...mapGetters(["petition", "isAuthenticated", "user", "signatories"]),
+    ...mapGetters([
+      "petition",
+      "isAuthenticated",
+      "user",
+      "signatories",
+      "params"
+    ]),
     isAuthor: function() {
       return (
         !this.isEditMode &&
@@ -115,7 +125,7 @@ export default {
         if (this.isProfile) {
           this.$store.dispatch(FETCH_PETITIONS, { authorId: this.user.userId });
         } else {
-          this.$store.dispatch(FETCH_PETITIONS);
+          this.$store.dispatch(FETCH_PETITIONS, this.params);
         }
         this.$emit("closeDialog");
         this.$emit("update:isEditMode", false);

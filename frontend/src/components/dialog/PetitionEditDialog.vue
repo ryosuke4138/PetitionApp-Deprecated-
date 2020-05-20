@@ -14,13 +14,7 @@
                 />
               </v-flex>
               <v-flex md4>
-                <v-text-field
-                  name="Title"
-                  type="text"
-                  label="Title"
-                  v-model="title"
-                  required
-                />
+                <v-text-field name="Title" type="text" label="Title" v-model="title" required />
               </v-flex>
               <v-flex xs3>
                 <v-select
@@ -52,7 +46,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="green darken-1" text @click.native="save">Save</v-btn>
+        <v-btn v-if="isCreate" color="green darken-1" text @click.native="save">Save</v-btn>
+        <v-btn v-if="!isCreate" color="green darken-1" text @click.native="edit">Save</v-btn>
         <v-btn color="green darken-1" text @click.native="cancel">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -63,8 +58,9 @@
 import { mapGetters } from "vuex";
 import {
   FETCH_PETITIONS,
+  FETCH_PETITION,
   FETCH_PETITION_CATEGORY,
-  SIGN_PETITION,
+  SIGN_PETITION
 } from "@/store/actions.type";
 import InputImage from "@/components/ui/InputImage.vue";
 import AddDateButton from "@/components/ui/AddDateButton";
@@ -73,30 +69,35 @@ import {
   DO_RESET_PETITION,
   PUBLISH_PETITION,
   PUT_PETITION_PHOTO,
+  UPDATE_PETITION
 } from "../../store/actions.type";
 
 export default {
   components: {
     InputImage,
-    AddDateButton,
+    AddDateButton
   },
   props: {
     showPetitionDetailsDialog: {
       type: Boolean,
-      default: false,
+      default: false
     },
     petitionId: {
       type: Number,
-      default: null,
+      default: null
     },
     isEditMode: {
       type: Boolean,
-      default: false,
+      default: false
     },
     isCreate: {
       type: Boolean,
-      default: false,
+      default: false
     },
+    isProfile: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => ({
     API_URL: API_URL,
@@ -106,15 +107,15 @@ export default {
     description: "",
     category: null,
     date: null,
-    newPetition: {},
+    newPetition: {}
   }),
   computed: {
-    ...mapGetters(["petition", "petitionCategory"]),
+    ...mapGetters(["petition", "petitionCategory", "params", "user"])
   },
   mounted() {
     this.$store.dispatch(DO_RESET_PETITION);
     this.$store.dispatch(FETCH_PETITION_CATEGORY).then(() => {
-      this.petitionCategoryName = this.petitionCategory.map((c) => c.name);
+      this.petitionCategoryName = this.petitionCategory.map(c => c.name);
     });
   },
   watch: {
@@ -126,30 +127,68 @@ export default {
         this.category = this.petition.category;
       }
     },
+    isEditMode: function() {
+      if (!this.isCreate) {
+        this.$store.dispatch(FETCH_PETITION, this.petitionId).then(() => {
+          this.title = this.petition.title;
+          this.category = this.petition.category;
+          this.description = this.petition.description;
+          if (this.$refs.dateButton) {
+            this.$refs.dateButton.setDate(this.petition.closingDate);
+          }
+          // this.date = this.petition.closingDate + " 00:00:00.000";
+        });
+      }
+    }
   },
   methods: {
-    save() {
+    updateNewPetition() {
       this.newPetition.title = this.title;
       this.newPetition.description = this.description;
       this.newPetition.categoryId = this.petitionCategory.find(
-        (c) => c.name == this.category
+        c => c.name == this.category
       ).categoryId;
       if (this.date) this.newPetition.closingDate = this.date;
+    },
+    save() {
+      this.updateNewPetition();
       this.$store
         .dispatch(PUBLISH_PETITION, this.newPetition)
         .then(({ data }) => {
           this.$store.dispatch(SIGN_PETITION, data.petitionId).then(() => {
             this.putPhoto(data.petitionId).then(() => {
-              this.$emit("closeDialog");
-              this.$emit("update:isEditMode", false);
-              this.$store.dispatch(FETCH_PETITIONS);
-              this.init();
+              this.reset();
             });
           });
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
+    },
+    edit() {
+      this.updateNewPetition();
+      this.$store
+        .dispatch(UPDATE_PETITION, {
+          petitionId: this.petition.petitionId,
+          newPetition: this.newPetition
+        })
+        .then(() => {
+          if (this.imageFile) {
+            this.putPhoto(this.petitionId).then(() => {
+              this.reset();
+            });
+          } else this.reset();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    reset() {
+      this.$emit("closeDialog");
+      this.$emit("update:isEditMode", false);
+      if (this.isProfile) this.params.authorId = this.user.userId;
+      this.$store.dispatch(FETCH_PETITIONS, this.params);
+      this.init();
     },
     cancel() {
       this.$emit("update:isEditMode", false);
@@ -161,7 +200,7 @@ export default {
       this.$store.dispatch(PUT_PETITION_PHOTO, {
         petitionId: petitionId,
         image: this.imageFile,
-        imageType: this.imageFile.type,
+        imageType: this.imageFile.type
       });
     },
     setDate(date) {
@@ -175,7 +214,7 @@ export default {
       this.newPetition = {};
       this.$refs.dateButton.cancelDatePicker();
       this.$refs.image.resetUploadedImage();
-    },
-  },
+    }
+  }
 };
 </script>

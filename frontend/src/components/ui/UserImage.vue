@@ -1,8 +1,8 @@
 <template>
-  <v-avatar size="36">
-    <v-img v-if="image" :src="image" />
+  <div>
+    <v-img class="profileImage" v-if="image" :src="image" />
     <v-icon v-else large>mdi-account-circle</v-icon>
-  </v-avatar>
+  </div>
 </template>
 
 <script>
@@ -42,3 +42,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.profileImage {
+  min-height: 20%;
+  min-width: 20%;
+}
+</style>

@@ -2,6 +2,7 @@ import {
   FETCH_PETITIONS,
   FETCH_PETITION_CATEGORY,
   SET_PAGE,
+  SET_PARAMS,
 } from "./actions.type";
 import { PetitionsService } from "@/common/api.service";
 import {
@@ -10,6 +11,7 @@ import {
   FETCH_CATEGORY_END,
   UPDATE_PETITION_IN_LIST,
   UPDATE_PAGE_NUMBER,
+  UPDATE_PARAMS,
 } from "./mutations.type";
 
 // the petitions should have those value
@@ -26,6 +28,7 @@ const state = {
   petitionCount: 0,
   page: 1,
   petitionCategory: [],
+  params: {}, // for searching, filtering, sorting petitions
 };
 
 const getters = {
@@ -43,6 +46,9 @@ const getters = {
   },
   page(state) {
     return state.page;
+  },
+  params(state) {
+    return state.params;
   },
 };
 
@@ -69,6 +75,9 @@ const actions = {
   },
   [SET_PAGE]({ commit }, val) {
     commit(UPDATE_PAGE_NUMBER, val);
+  },
+  [SET_PARAMS]({ commit }, val) {
+    commit(UPDATE_PARAMS, val);
   },
 };
 
@@ -101,6 +110,9 @@ const mutations = {
   },
   [UPDATE_PAGE_NUMBER](state, val) {
     state.page = val;
+  },
+  [UPDATE_PARAMS](state, val) {
+    state.params = val;
   },
 };
 

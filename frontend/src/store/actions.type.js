@@ -18,3 +18,4 @@ export const SIGN_PETITION = "signPetition";
 export const UNSIGN_PETITION = "unsignPetition";
 export const RESET_ERROR = "resetError";
 export const SET_PAGE = "setPage";
+export const SET_PARAMS = "setParams";

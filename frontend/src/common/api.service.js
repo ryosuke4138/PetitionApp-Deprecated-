@@ -33,6 +33,12 @@ const ApiService = {
     return Vue.axios.put(`${resource}/${slug}`, params);
   },
 
+  patch(resource, slug, params) {
+    console.log("patch");
+    console.log(params);
+    return Vue.axios.patch(`${resource}/${slug}`, params);
+  },
+
   putPhoto(resource, params, imageType) {
     const headers = { "content-type": imageType };
     return Vue.axios.put(`${resource}`, params, { headers });
@@ -72,7 +78,7 @@ export const PetitionsService = {
     return ApiService.post("petitions", params);
   },
   update(slug, params) {
-    return ApiService.update("petitions", slug, params);
+    return ApiService.patch("petitions", slug, params);
   },
   destroy(slug) {
     return ApiService.delete(`petitions/${slug}`);

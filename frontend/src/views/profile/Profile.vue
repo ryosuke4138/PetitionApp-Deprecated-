@@ -3,6 +3,8 @@
     <NavBar />
     <v-row align="center">
       <ProfileCard />
+    </v-row>
+    <v-row align="center">
       <PetitionCard
         v-for="(petition, i) in petitions"
         :key="i"
@@ -10,12 +12,12 @@
         :show-petition-details-dialog.sync="showPetitionDetailsDialog"
         :target-petition-id.sync="targetPetitionId"
       />
-      <PetitionDetailsDialog
-        :petition-id.sync="targetPetitionId"
-        :show-petition-details-dialog.sync="showPetitionDetailsDialog"
-        :isProfile="true"
-      />
     </v-row>
+    <PetitionDetailsDialog
+      :petition-id.sync="targetPetitionId"
+      :show-petition-details-dialog.sync="showPetitionDetailsDialog"
+      :isProfile="true"
+    />
   </v-app>
 </template>
 
@@ -46,3 +48,6 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+</style>

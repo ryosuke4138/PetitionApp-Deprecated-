@@ -36,7 +36,8 @@ import { mapGetters } from "vuex";
 import {
   FETCH_PETITIONS,
   FETCH_PETITION_CATEGORY,
-  SET_PAGE
+  SET_PAGE,
+  SET_PARAMS
 } from "../../store/actions.type";
 export default {
   data: () => ({
@@ -87,6 +88,7 @@ export default {
       }
       params.sortBy = this.sortsQuery[this.sorts.indexOf(this.sort)];
       this.$store.dispatch(FETCH_PETITIONS, params);
+      this.$store.dispatch(SET_PARAMS, params);
       this.$store.dispatch(SET_PAGE, 1);
     }
   }

@@ -5,6 +5,7 @@
       :petition-id="petitionId"
       :is-edit-mode.sync="isEditMode"
       :is-create="false"
+      :is-profile="isProfile"
       @closeDialog="closeDialog"
     />
 

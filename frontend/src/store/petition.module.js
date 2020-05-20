@@ -38,6 +38,9 @@ export const state = { ...initialState };
 export const actions = {
   async [FETCH_PETITION](context, slug) {
     const { data } = await PetitionsService.get(slug);
+    data.createdDate = formatDate(data.createdDate);
+    data.closingDate = formatDate(data.closingDate);
+    data.displayDate = formatDisplayDate(data.createdDate, data.closingDate);
     context.commit(SET_PETITION, data);
     return data;
   },
@@ -46,10 +49,8 @@ export const actions = {
     context.commit(RESET_PETITION);
     return data;
   },
-  async [UPDATE_PETITION](context, slug, params) {
-    const { data } = await PetitionsService.update(slug, params);
-    context.commit(SET_PETITION, data);
-    return data;
+  async [UPDATE_PETITION](context, d) {
+    await PetitionsService.update(d.petitionId, d.newPetition);
   },
   async [PUBLISH_PETITION](context, params) {
     return await PetitionsService.create(params);
@@ -90,18 +91,26 @@ export const mutations = {
   },
 };
 
+function slashToHyphen(date) {
+  const [day, month, year] = date.substr(0, 10).split("/");
+  return `${year}-${month}-${day}`;
+}
+
 function formatDate(date) {
-  if (!date) return "(not set yet)";
-  const [year, month, day] = date.substr(0, 10).split("-");
-  return `${month}/${day}/${year}`;
+  if (!date) return null;
+  return slashToHyphen(new Date(date).toLocaleString());
+}
+
+function formatDisplayDate(createdDate, closingDate) {
+  if (closingDate) {
+    return createdDate + " - " + closingDate;
+  } else {
+    return createdDate + " - (not set yet)";
+  }
 }
 
 const getters = {
   petition(state) {
-    state.petition.displayDate =
-      formatDate(state.petition.createdDate) +
-      " - " +
-      formatDate(state.petition.closingDate);
     return state.petition;
   },
   signatories(state) {
