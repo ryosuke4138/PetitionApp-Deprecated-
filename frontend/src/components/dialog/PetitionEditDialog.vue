@@ -119,9 +119,6 @@ export default {
     });
   },
   watch: {
-    // petitionCategory: function(val) {
-    //   this.petitionCategoryName = val.map(c => c.name);
-    // },
     category: function(val) {
       if (!val && !this.isCreate) {
         this.category = this.petition.category;
@@ -136,7 +133,6 @@ export default {
           if (this.$refs.dateButton) {
             this.$refs.dateButton.setDate(this.petition.closingDate);
           }
-          // this.date = this.petition.closingDate + " 00:00:00.000";
         });
       }
     }
@@ -186,8 +182,11 @@ export default {
     reset() {
       this.$emit("closeDialog");
       this.$emit("update:isEditMode", false);
-      if (this.isProfile) this.params.authorId = this.user.userId;
-      this.$store.dispatch(FETCH_PETITIONS, this.params);
+      if (this.isProfile) {
+        this.$store.dispatch(FETCH_PETITIONS, { authorId: this.user.userId });
+      } else {
+        this.$store.dispatch(FETCH_PETITIONS, this.params);
+      }
       this.init();
     },
     cancel() {

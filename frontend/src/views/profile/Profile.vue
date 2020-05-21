@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <NavBar />
+    <PetitionCreateDialog :isProfile="true" />
     <v-row align="center">
       <ProfileCard />
     </v-row>
@@ -28,13 +29,15 @@ import ProfileCard from "@/components/card/ProfileCard";
 import { FETCH_PETITIONS } from "@/store/actions.type";
 import PetitionDetailsDialog from "@/components/dialog/PetitionDetailsDialog";
 import PetitionCard from "@/components/card/PetitionCard.vue";
+import PetitionCreateDialog from "@/components/dialog/PetitionCreateDialog";
 
 export default {
   components: {
     NavBar,
     ProfileCard,
     PetitionCard,
-    PetitionDetailsDialog
+    PetitionDetailsDialog,
+    PetitionCreateDialog
   },
   data: () => ({
     showPetitionDetailsDialog: false,

@@ -10,13 +10,20 @@ import {
   RESET_ERROR,
   PUT_USER_PHOTO,
 } from "./actions.type";
-import { SET_AUTH, PURGE_AUTH, SET_ERROR, SET_USER } from "./mutations.type";
+import {
+  SET_AUTH,
+  PURGE_AUTH,
+  SET_ERROR,
+  SET_USER,
+  SET_IS_USER_LOADING,
+} from "./mutations.type";
 
 export const state = {
   errors: null,
   user: {},
   isAuthenticated: false,
   token: "",
+  isUserLoading: false,
 };
 
 const getters = {
@@ -28,6 +35,9 @@ const getters = {
   },
   errors(state) {
     return state.errors;
+  },
+  isUserLoading(state) {
+    return state.isUserLoading;
   },
 };
 
@@ -62,15 +72,18 @@ const actions = {
   async [FETCH_USER]({ commit }, userId) {
     try {
       const { data } = await UserService.get(userId);
-      //const token = data.token;
+      data.userId = userId;
       commit(SET_USER, data);
       return data;
     } catch (response) {
       return response;
     }
   },
-  async [UPDATE_USER](context, userId, userDetails) {
-    await UserService.update(userId, userDetails);
+  async [UPDATE_USER]({ commit }, d) {
+    await UserService.update(d.userId, d.val);
+    const { data } = await UserService.get(d.userId);
+    data.userId = d.userId;
+    commit(SET_USER, data);
   },
   async [FETCH_USER_PHOTO](context, userId) {
     return await UserService.getPhoto(userId);
@@ -78,29 +91,17 @@ const actions = {
   [RESET_ERROR]({ commit }) {
     commit(SET_ERROR, null);
   },
-  async [PUT_USER_PHOTO](context, data) {
+  async [PUT_USER_PHOTO]({ commit }, data) {
+    commit(SET_IS_USER_LOADING, true);
     await UserService.updatePhoto(data.userId, data.image, data.imageType);
+    commit(SET_IS_USER_LOADING, false);
   },
-  // [UPDATE_USER](context, payload) {
-  //   const { email, username, password, image, bio } = payload;
-  //   const user = {
-  //     email,
-  //     username,
-  //     bio,
-  //     image,
-  //   };
-  //   if (password) {
-  //     user.password = password;
-  //   }
-
-  //   return ApiService.put("user", user).then(({ data }) => {
-  //     context.commit(SET_AUTH, data.user);
-  //     return data;
-  //   });
-  // },
 };
 
 const mutations = {
+  [SET_IS_USER_LOADING](state, val) {
+    state.isUserLoading = val;
+  },
   [SET_USER](state, user) {
     state.user = user;
   },

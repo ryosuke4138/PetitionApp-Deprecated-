@@ -48,8 +48,8 @@ export default {
     rules: [
       value =>
         !value ||
-        value.size < 50000000 ||
-        "Image should be less than 50 MB, sorry"
+        value.size < 20000000 ||
+        "Image should be less than 20 MB, sorry"
     ]
   }),
   watch: {

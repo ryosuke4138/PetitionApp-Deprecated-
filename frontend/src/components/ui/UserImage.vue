@@ -6,8 +6,9 @@
 </template>
 
 <script>
-import { FETCH_USER_PHOTO } from "../../store/actions.type";
 import API_URL from "@/common/config";
+import { FETCH_USER_PHOTO } from "../../store/actions.type";
+
 export default {
   props: {
     userId: {

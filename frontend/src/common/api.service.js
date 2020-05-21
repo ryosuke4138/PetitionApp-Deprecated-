@@ -34,8 +34,6 @@ const ApiService = {
   },
 
   patch(resource, slug, params) {
-    console.log("patch");
-    console.log(params);
     return Vue.axios.patch(`${resource}/${slug}`, params);
   },
 
@@ -114,7 +112,7 @@ export const UserService = {
     return ApiService.get("users", slug);
   },
   update(slug, params) {
-    return ApiService.put("users", slug, params);
+    return ApiService.patch("users", slug, params);
   },
   getPhoto(slug) {
     return ApiService.getPhoto(`users/${slug}/photo`);

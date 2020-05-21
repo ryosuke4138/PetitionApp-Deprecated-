@@ -11,13 +11,10 @@
         v-if="!uploadedImage && !isCreate"
         class="white--text align-end"
         height="200px"
-        :src="API_URL + 'users/' + petitionId + '/photo'"
+        :src="image"
+        :key="index"
       />
-      <v-img
-        v-if="uploadedImage"
-        class="white--text align-end"
-        :src="uploadedImage"
-      />
+      <v-img v-if="uploadedImage" class="white--text align-end" :src="uploadedImage" />
       <v-file-input
         v-model="uploadedImageFile"
         accept="image/png, image/jpeg, image/jpg, image/gif"
@@ -32,36 +29,47 @@
 
 <script>
 import API_URL from "@/common/config";
+import { FETCH_USER_PHOTO } from "../../store/actions.type";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
-    petitionId: {
-      type: Number,
-      default: null,
-    },
     isCreate: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data: () => ({
     image: require("@/assets/image/no_image.png"),
     API_URL: API_URL,
     uploadedImageFile: null,
     uploadedImage: "",
+    index: 0,
     rules: [
-      (value) =>
+      value =>
         !value ||
         value.size < 50000000 ||
-        "Image should be less than 50 MB, sorry",
-    ],
+        "Image should be less than 50 MB, sorry"
+    ]
   }),
+  mounted() {
+    this.getImage();
+  },
   watch: {
     uploadedImageFile: function(val) {
       if (!val) {
         this.uploadedImage = "";
       }
     },
+    isCreate: function(val) {
+      if (val) {
+        this.index++;
+        this.getImage();
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(["user"])
   },
   methods: {
     onFileChange(file) {
@@ -79,7 +87,18 @@ export default {
     resetUploadedImage() {
       this.uploadedImageFile = null;
     },
-  },
+    getImage() {
+      if (!this.user.userId) return;
+      this.$store
+        .dispatch(FETCH_USER_PHOTO, this.user.userId)
+        .then(() => {
+          this.image = this.API_URL + "users/" + this.user.userId + "/photo";
+        })
+        .catch(() => {
+          this.image = null;
+        });
+    }
+  }
 };
 </script>
 
