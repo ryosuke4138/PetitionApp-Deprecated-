@@ -1,10 +1,17 @@
-import { FETCH_PETITIONS, FETCH_PETITION_CATEGORY } from "./actions.type";
+import {
+  FETCH_PETITIONS,
+  FETCH_PETITION_CATEGORY,
+  SET_PAGE,
+  SET_PARAMS,
+} from "./actions.type";
 import { PetitionsService } from "@/common/api.service";
 import {
   FETCH_START,
   FETCH_PETITIONS_END,
   FETCH_CATEGORY_END,
   UPDATE_PETITION_IN_LIST,
+  UPDATE_PAGE_NUMBER,
+  UPDATE_PARAMS,
 } from "./mutations.type";
 
 // the petitions should have those value
@@ -19,7 +26,9 @@ const state = {
   petitions: [],
   isLoading: true,
   petitionCount: 0,
+  page: 1,
   petitionCategory: [],
+  params: {}, // for searching, filtering, sorting petitions
 };
 
 const getters = {
@@ -34,6 +43,12 @@ const getters = {
   },
   petitionCategory(state) {
     return state.petitionCategory;
+  },
+  page(state) {
+    return state.page;
+  },
+  params(state) {
+    return state.params;
   },
 };
 
@@ -57,6 +72,12 @@ const actions = {
       .catch((error) => {
         throw new Error(error);
       });
+  },
+  [SET_PAGE]({ commit }, val) {
+    commit(UPDATE_PAGE_NUMBER, val);
+  },
+  [SET_PARAMS]({ commit }, val) {
+    commit(UPDATE_PARAMS, val);
   },
 };
 
@@ -86,6 +107,12 @@ const mutations = {
       // article.favoritesCount = data.favoritesCount;
       return petition;
     });
+  },
+  [UPDATE_PAGE_NUMBER](state, val) {
+    state.page = val;
+  },
+  [UPDATE_PARAMS](state, val) {
+    state.params = val;
   },
 };
 

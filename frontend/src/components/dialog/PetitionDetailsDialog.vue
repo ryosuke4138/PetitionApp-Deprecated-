@@ -5,6 +5,7 @@
       :petition-id="petitionId"
       :is-edit-mode.sync="isEditMode"
       :is-create="false"
+      :is-profile="isProfile"
       @closeDialog="closeDialog"
     />
 
@@ -12,6 +13,7 @@
       :show-petition-details-dialog.sync="showPetitionDetailsDialog"
       :petition-id="petitionId"
       :is-edit-mode.sync="isEditMode"
+      :is-profile="isProfile"
       @closeDialog="closeDialog"
     />
   </div>
@@ -40,6 +42,10 @@ export default {
       default: null
     },
     isCreate: {
+      type: Boolean,
+      default: false
+    },
+    isProfile: {
       type: Boolean,
       default: false
     }

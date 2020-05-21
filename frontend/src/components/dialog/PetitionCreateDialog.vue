@@ -5,6 +5,7 @@
       :show-petition-details-dialog.sync="showPetitionCreateDialog"
       :is-edit-mode="true"
       :is-create="true"
+      :isProfile="isProfile"
       @closeDialog="closeDialog"
     />
   </div>
@@ -24,6 +25,12 @@ export default {
     showPetitionCreateDialog: false,
     disabledButton: false
   }),
+  props: {
+    isProfile: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     ...mapGetters(["petition", "isAuthenticated"])
   },
