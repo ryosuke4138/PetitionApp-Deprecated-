@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dateButton">
     <v-btn v-if="!isOpenDatePicker" @click="openDatePicker">Add Closing Date</v-btn>
     <div v-if="isOpenDatePicker">
       <v-container>

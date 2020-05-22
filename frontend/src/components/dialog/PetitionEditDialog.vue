@@ -1,6 +1,8 @@
 <template>
   <v-dialog v-model="showPetitionDetailsDialog" persistent v-if="isEditMode">
     <v-card color="grey lighten-4" text>
+      <v-card-title v-if="isCreate">Create Petition</v-card-title>
+      <v-card-title v-else>Edit Petition</v-card-title>
       <v-card-text>
         <v-container fluid>
           <v-form ref="form">

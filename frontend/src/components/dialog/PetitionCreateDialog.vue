@@ -1,6 +1,11 @@
 <template>
   <div>
-    <CreateButton v-if="isAuthenticated" @click="openDialog" :disabled="disabledButton" />
+    <CreateButton
+      class="button"
+      v-if="isAuthenticated"
+      @click="openDialog"
+      :disabled="disabledButton"
+    />
     <PetitionEditDialog
       :show-petition-details-dialog.sync="showPetitionCreateDialog"
       :is-edit-mode="true"
@@ -46,3 +51,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.button {
+  margin-left: 15px;
+  margin-right: 0px;
+  margin-top: 15px;
+}
+</style>

@@ -1,5 +1,6 @@
 import { UserService } from "@/common/api.service";
 import ApiService from "@/common/api.service";
+import JwtService from "@/common/jwt.service";
 import {
   LOGIN,
   LOGOUT,
@@ -21,8 +22,7 @@ import {
 export const state = {
   errors: null,
   user: {},
-  isAuthenticated: false,
-  token: "",
+  isAuthenticated: !!JwtService.getToken(),
   isUserLoading: false,
 };
 
@@ -111,13 +111,13 @@ const mutations = {
   [SET_AUTH](state, token) {
     state.isAuthenticated = true;
     state.errors = null;
-    state.token = token;
+    JwtService.saveToken(token);
   },
   [PURGE_AUTH](state) {
     state.isAuthenticated = false;
     state.user = {};
     state.errors = null;
-    state.token = "";
+    JwtService.destroyToken();
   },
 };
 

@@ -9,11 +9,13 @@
         :show-petition-details-dialog.sync="showPetitionDetailsDialog"
         :target-petition-id.sync="targetPetitionId"
       />
-      <PaginationButton />
       <PetitionDetailsDialog
         :petition-id.sync="targetPetitionId"
         :show-petition-details-dialog.sync="showPetitionDetailsDialog"
       />
+    </v-row>
+    <v-row class="pagination">
+      <PaginationButton />
     </v-row>
   </div>
 </template>
@@ -50,3 +52,14 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+v-row {
+  margin-left: 5px;
+  margin-left: 5px;
+}
+.pagination {
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>

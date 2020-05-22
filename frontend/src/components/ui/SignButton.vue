@@ -10,49 +10,45 @@
 import {
   SIGN_PETITION,
   UNSIGN_PETITION,
-  FETCH_SIGNATURES,
+  FETCH_SIGNATURES
 } from "../../store/actions.type";
 export default {
   data: () => ({
-    isSigned: true,
+    isSigned: true
   }),
   props: {
     petitionId: {
       type: Number,
-      default: null,
+      default: null
     },
     userId: {
       type: Number,
-      default: null,
+      default: null
     },
     closingDate: {
-      default: null,
-    },
+      default: null
+    }
   },
   created: function() {
-    this.$store
-      .dispatch(FETCH_SIGNATURES, this.petitionId)
-      .then((signatures) => {
-        this.isSigned = signatures.some(
-          (signature) => signature.signatoryId == this.userId
-        );
-      });
+    this.$store.dispatch(FETCH_SIGNATURES, this.petitionId).then(signatures => {
+      this.isSigned = signatures.some(
+        signature => signature.signatoryId == this.userId
+      );
+    });
   },
   watch: {
     petitionId: function(newPetitionId) {
-      this.$store
-        .dispatch(FETCH_SIGNATURES, newPetitionId)
-        .then((signatures) => {
-          this.isSigned = signatures.some(
-            (signature) => signature.signatoryId == this.userId
-          );
-        });
-    },
+      this.$store.dispatch(FETCH_SIGNATURES, newPetitionId).then(signatures => {
+        this.isSigned = signatures.some(
+          signature => signature.signatoryId == this.userId
+        );
+      });
+    }
   },
   computed: {
     isExpired: function() {
       return this.closingDate && new Date(this.closingDate) <= new Date();
-    },
+    }
   },
   methods: {
     sign() {
@@ -66,7 +62,7 @@ export default {
         this.$store.dispatch(FETCH_SIGNATURES, this.petitionId);
         this.isSigned = false;
       });
-    },
-  },
+    }
+  }
 };
 </script>

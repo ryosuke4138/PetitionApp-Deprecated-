@@ -46,7 +46,8 @@ export default {
 
 <style scoped>
 .profileImage {
-  min-height: 20%;
-  min-width: 20%;
+  border-width: 4%;
+  border-style: solid;
+  border-color: rgba(42, 42, 255, 0.534)104, 104, 133);
 }
 </style>
