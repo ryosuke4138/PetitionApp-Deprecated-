@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center">
+  <v-row :class="{ top: true }" justify="center">
     <v-col cols="12" sm="10" md="8" lg="6">
       <v-card ref="form">
         <v-card-title>Search, Filter, and Sort Petitions</v-card-title>
@@ -107,3 +107,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.top {
+  margin-top: 72px;
+}
+</style>

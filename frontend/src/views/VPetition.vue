@@ -3,77 +3,81 @@
     <NavBar />
     <v-img
       :key="index"
-      class="white--text align-end"
+      :class="{ petitionImg: true }"
       max-height="400px"
       :src="API_URL + 'petitions/' + petition.petitionId + '/photo'"
     ></v-img>
-    <v-row>
-      {{ petition.title }}
-      <v-subheader class="pa-2" tile outlined>
+    <div :class="{ row: true }">
+      <p :class="{ title: true }">
+        {{ petition.title }}
+      </p>
+      <p :class="{ date: true }">
         {{ petition.displayDate }}
-      </v-subheader>
+      </p>
       <v-spacer />
-      <div>
-        <v-spacer></v-spacer>
-        <SignButton
-          v-if="isAuthenticated && !isAuthor"
-          :petitionId="petition.petitionId"
-          :userId="user.userId"
-          :closingDate="petition.closingDate"
-        />
-        <v-btn v-if="isAuthor" color="green darken-1" text @click.native="edit"
-          >Edit</v-btn
-        >
-        <v-btn
-          v-if="isAuthor"
-          color="green darken-1"
-          text
-          @click.native="remove"
-          >Delete</v-btn
-        >
-        <v-btn color="green darken-1" text @click.native="close">Close</v-btn>
-      </div>
-    </v-row>
-    <!-- <SocialSharingButton /> -->
-    <v-divider />
-    <v-subheader class="pa-2" tile outlined
-      >Category: {{ petition.category }}</v-subheader
-    >
-    <v-subheader class="pa-2" tile outlined
-      >Signature Count: {{ petition.signatureCount }}</v-subheader
-    >
-    <v-row no-gutters>
-      <v-subheader class="pa-2" tile outlined>
-        Author:
-        <v-avatar size="36">
-          <UserImage :userId="petition.authorId" />
-        </v-avatar>
-        <!-- TODO: FIX for the case that city and/or country is null -->
-        {{ petition.authorName }} ({{ petition.authorCity }},
-        {{ petition.authorCountry }})
-      </v-subheader>
-    </v-row>
-    <v-row no-gutters>
-      <v-subheader class="pa-2" tile outlined
-        >Description: {{ petition.description }}</v-subheader
+      <SignButton
+        :class="{ actionButton: true }"
+        v-if="isAuthenticated && !isAuthor"
+        :petitionId="petition.petitionId"
+        :userId="user.userId"
+        :closingDate="petition.closingDate"
+      />
+      <v-btn
+        :class="{ actionButton: true }"
+        v-if="isAuthor"
+        color="green darken-1"
+        text
+        @click.native="edit"
+        >Edit</v-btn
       >
-    </v-row>
+      <v-btn
+        :class="{ actionButton: true }"
+        v-if="isAuthor"
+        color="green darken-1"
+        text
+        @click.native="remove"
+        >Delete</v-btn
+      >
+      <v-btn
+        :class="{ actionButton: true }"
+        color="green darken-1"
+        text
+        @click.native="close"
+        >Close</v-btn
+      >
+    </div>
+    <!-- <SocialSharingButton /> -->
+    <v-divider :class="{ divider: true }" />
+    <p :class="{ userInfo: true }">Category: {{ petition.category }}</p>
+    <p :class="{ userInfo: true }">
+      Signature Count: {{ petition.signatureCount }}
+    </p>
+    <p :class="{ userInfo: true }">
+      Author:
+      <v-avatar size="36">
+        <UserImage :userId="petition.authorId" />
+      </v-avatar>
+      <!-- TODO: FIX for the case that city and/or country is null -->
+      {{ petition.authorName }} ({{ petition.authorCity }},
+      {{ petition.authorCountry }})
+    </p>
+    <p :class="{ userInfo: true }">Description: {{ petition.description }}</p>
     <v-divider />
-    <v-subheader class="pa-2" tile outlined>List of Signatories</v-subheader>
-    <v-row
+    <p :class="{ subtitle: true }">List of Signatories</p>
+    <div
       v-for="(signatory, i) in signatories"
       :key="'VPetitionVRow' + i"
       no-gutters
     >
-      <v-col>
+      <div>
         <v-subheader class="pa-2">
           <v-avatar size="36">
             <UserImage :userId="signatory.signatoryId" />
           </v-avatar>
           {{ signatory.name }} {{ signatory.display }}
         </v-subheader>
-      </v-col>
-    </v-row>
+      </div>
+    </div>
     <PetitionEditDialog
       :dialog.sync="showEditDialog"
       :defaultPetition="petition"
@@ -166,3 +170,49 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.title {
+  font-weight: normal;
+  text-align: center;
+  margin-top: 7px;
+  margin-right: 13px;
+  font-size: 20px;
+}
+.subtitle {
+  font-weight: normal;
+  text-align: left;
+  margin-top: 5px;
+  margin-left: 15px;
+  font-size: 18px;
+}
+.divider {
+  margin-top: 42px;
+}
+.userInfo {
+  font-weight: normal;
+  text-align: left;
+  margin-top: 5px;
+  margin-left: 15px;
+  font-size: 18px;
+  background-color: none;
+}
+.date {
+  font-weight: normal;
+  text-align: center;
+  margin-top: 13px;
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+.row {
+  margin-left: 10px;
+  margin-right: 0;
+  height: 2px;
+}
+.petitionImg {
+  margin-top: 64px;
+}
+.actionButton {
+  margin-top: 5px;
+}
+</style>

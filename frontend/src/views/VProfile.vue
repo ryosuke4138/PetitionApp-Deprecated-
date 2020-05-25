@@ -2,7 +2,7 @@
   <v-app>
     <NavBar />
     <PetitionCreateDialog :isProfile="true" />
-    <h1 class="title">Profile</h1>
+    <h1 :class="{ title: true }">Profile</h1>
     <v-row class="profile" align="center">
       <ProfileCard />
     </v-row>
@@ -54,6 +54,7 @@ export default {
   font-weight: normal;
   text-align: center;
   margin-bottom: 20px;
+  margin-top: 92px;
   font-size: 24px;
 }
 .mypetition {

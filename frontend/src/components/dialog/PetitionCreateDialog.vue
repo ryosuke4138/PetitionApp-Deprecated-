@@ -1,7 +1,7 @@
 <template>
   <div>
     <CreateButton
-      class="button"
+      class="petitionButton"
       v-if="isAuthenticated"
       @click="dialog = true"
       :disabled="dialog"
@@ -181,9 +181,11 @@ export default {
 </script>
 
 <style scoped>
-.button {
+.petitionButton {
   margin-left: 15px;
   margin-right: 0px;
-  margin-top: 15px;
+  margin-top: 73px;
+  position: fixed;
+  z-index: 10;
 }
 </style>
