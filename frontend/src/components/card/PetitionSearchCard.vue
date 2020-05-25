@@ -1,10 +1,10 @@
 <template>
-  <v-row justify="center">
+  <v-row :class="{ top: true }" justify="center">
     <v-col cols="12" sm="10" md="8" lg="6">
       <v-card ref="form">
         <v-card-title>Search, Filter, and Sort Petitions</v-card-title>
         <v-card-text>
-          <v-text-field label="Name" ref="name" v-model="name"></v-text-field>
+          <v-text-field label="Name" ref="name" v-model="q"></v-text-field>
           <v-autocomplete
             ref="category"
             v-model="category"
@@ -22,7 +22,7 @@
         </v-card-text>
         <v-divider class="mt-12"></v-divider>
         <v-card-actions>
-          <v-btn text @click="cancel">Cancel</v-btn>
+          <v-btn text @click="cancelFilter">Cancel Filter</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="submit">Filter</v-btn>
         </v-card-actions>
@@ -37,60 +37,79 @@ import {
   FETCH_PETITIONS,
   FETCH_PETITION_CATEGORY,
   SET_PAGE,
-  SET_PARAMS
+  SET_PARAMS,
 } from "../../store/actions.type";
 export default {
-  data: () => ({
-    name: null,
+  props: {
+    defaultParams: {
+      type: Object,
+      required: true,
+    },
+  },
+  data: (vm) => ({
+    q: vm.defaultParams.q,
     category: null,
     categories: [],
-    sort: "Number of signatures, most to least",
+    sort: null,
     sorts: [
       "Alphabetically by title, A-Z",
       "Alphabetically by title, Z-A",
       "Number of signatures, least to most",
-      "Number of signatures, most to least"
+      "Number of signatures, most to least",
     ],
     sortsQuery: [
       "ALPHABETICAL_ASC",
       "ALPHABETICAL_DESC",
       "SIGNATURES_ASC",
-      "SIGNATURES_DESC"
+      "SIGNATURES_DESC",
     ],
-    formHasErrors: false
+    formHasErrors: false,
   }),
   computed: {
-    ...mapGetters(["petitionCategory", "petitionCount"])
+    ...mapGetters(["petitionCategory", "petitionCount"]),
   },
   watch: {
     name() {
       this.errorMessages = "";
-    }
+    },
   },
   mounted() {
     this.$store.dispatch(FETCH_PETITION_CATEGORY).then(() => {
-      this.categories = this.petitionCategory.map(c => c.name);
+      this.categories = this.petitionCategory.map((c) => c.name);
+      if (this.defaultParams.categoryId) {
+        this.category = this.petitionCategory.find(
+          (c) => c.categoryId == this.defaultParams.categoryId
+        );
+      }
     });
+    this.sort = this.sorts[this.sortsQuery.indexOf(this.defaultParams.sortBy)];
   },
   methods: {
-    cancel() {
-      this.name = null;
+    cancelFilter() {
+      this.q = null;
       this.category = null;
       this.sort = "Number of signatures, most to least";
+      this.submit();
     },
     submit() {
-      let params = {};
-      if (this.name) params.q = this.name;
+      let newParams = {};
+      if (this.q) newParams.q = this.q;
       if (this.category) {
-        params.categoryId = this.petitionCategory.find(
-          c => c.name == this.category
+        newParams.categoryId = this.petitionCategory.find(
+          (c) => c.name == this.category
         ).categoryId;
       }
-      params.sortBy = this.sortsQuery[this.sorts.indexOf(this.sort)];
-      this.$store.dispatch(FETCH_PETITIONS, params);
-      this.$store.dispatch(SET_PARAMS, params);
+      newParams.sortBy = this.sortsQuery[this.sorts.indexOf(this.sort)];
+      this.$store.dispatch(FETCH_PETITIONS, newParams);
+      this.$store.dispatch(SET_PARAMS, newParams);
       this.$store.dispatch(SET_PAGE, 1);
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style scoped>
+.top {
+  margin-top: 72px;
+}
+</style>

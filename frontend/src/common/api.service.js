@@ -1,6 +1,7 @@
 import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
+import JwtService from "@/common/jwt.service";
 import API_URL from "@/common/config";
 
 const ApiService = {
@@ -9,8 +10,10 @@ const ApiService = {
     Vue.axios.defaults.baseURL = API_URL;
   },
 
-  setHeader(token) {
-    Vue.axios.defaults.headers.common["X-Authorization"] = token;
+  setHeader() {
+    Vue.axios.defaults.headers.common[
+      "X-Authorization"
+    ] = JwtService.getToken();
   },
 
   query(resource, params) {
@@ -47,9 +50,7 @@ const ApiService = {
   },
 
   delete(resource) {
-    return Vue.axios.delete(resource).catch((error) => {
-      throw new Error(`ApiService ${error}`);
-    });
+    return Vue.axios.delete(resource);
   },
 
   getSignatures(slug) {
@@ -119,5 +120,8 @@ export const UserService = {
   },
   updatePhoto(slug, params, imageType) {
     return ApiService.putPhoto(`users/${slug}/photo`, params, imageType);
+  },
+  deletePhoto(slug) {
+    return ApiService.delete(`users/${slug}/photo`);
   },
 };

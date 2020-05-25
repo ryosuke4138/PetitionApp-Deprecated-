@@ -35,7 +35,9 @@
           </v-menu>
         </v-col>
       </v-container>
-      <v-btn @click="cancelDatePicker">Cancel Input Date</v-btn>
+      <v-btn @click="cancelDatePicker" v-if="!defaultDate"
+        >Cancel Input Date</v-btn
+      >
     </div>
   </div>
 </template>
@@ -43,13 +45,19 @@
 <script>
 export default {
   data: () => ({
-    isOpenDatePicker: false,
     date: null,
+    isOpenDatePicker: false,
     tommorow: null,
     dateFormatted: null,
     menu1: false,
     currentDate: new Date().toISOString().substr(0, 10),
   }),
+  props: {
+    defaultDate: {
+      type: String,
+      defalt: null,
+    },
+  },
   computed: {
     computedDateFormatted() {
       return this.formatDate(this.date);
@@ -61,7 +69,9 @@ export default {
     this.tommorow = this.parseDateMMDDYYYY(
       tommorow.toLocaleString().substr(0, 10)
     );
-    this.date = this.tommorow;
+    this.date = this.defaultDate || this.tommorow;
+    if (this.defaultDate) this.isOpenDatePicker = true;
+    this.dateFormatted = this.formatDate(this.date);
   },
   watch: {
     date() {
@@ -100,6 +110,11 @@ export default {
       this.isOpenDatePicker = false;
       this.date = this.tommorow;
       this.$emit("set", null);
+    },
+    setDate(date) {
+      this.date = date;
+      this.isOpenDatePicker = true;
+      this.$emit("set", date + " 00:00:00.000");
     },
     formatDate(date) {
       if (!date) return null;

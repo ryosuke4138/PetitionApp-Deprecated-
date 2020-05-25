@@ -9,7 +9,14 @@
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <v-alert v-if="errors" outlined type="warning" prominent border="left">{{ errors }}</v-alert>
+                <v-alert
+                  v-if="errors"
+                  outlined
+                  type="warning"
+                  prominent
+                  border="left"
+                  >{{ errors }}</v-alert
+                >
                 <v-text-field
                   v-model="name"
                   :error-messages="nameErrors"
@@ -33,8 +40,9 @@
                   @uploadImage="(file) => (this.imageFile = file)"
                   ref="image"
                 />
-                <small>*indicates required field</small>
+                <v-btn class="mr-4" @click="deletePhoto">Delete Photo</v-btn>
               </v-form>
+              <small>*indicates required field</small>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -56,7 +64,8 @@ import { required, email } from "vuelidate/lib/validators";
 import {
   RESET_ERROR,
   PUT_USER_PHOTO,
-  UPDATE_USER
+  UPDATE_USER,
+  DELETE_USER_PHOTO,
 } from "../../store/actions.type";
 import InputUserImage from "@/components/ui/InputUserImage";
 
@@ -64,16 +73,16 @@ export default {
   mixins: [validationMixin],
   validations: {
     name: { required },
-    email: { required, email }
+    email: { required, email },
   },
   components: {
-    InputUserImage
+    InputUserImage,
   },
   props: {
     showProfileDialog: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
     name: "",
@@ -84,13 +93,14 @@ export default {
     error: "",
     showProfileDialog1: false,
     isCreate: false,
+    errors: "",
     rules: {
-      required: value => !!value || "Required.",
-      emailMatch: () => "The email and password you entered don't match"
-    }
+      required: (value) => !!value || "Required.",
+      emailMatch: () => "The email and password you entered don't match",
+    },
   }),
   computed: {
-    ...mapGetters(["errors", "user"]),
+    ...mapGetters(["user"]),
     nameErrors() {
       const errors = [];
       if (!this.$v.name.$dirty) return errors;
@@ -103,7 +113,7 @@ export default {
       !this.$v.email.email && errors.push("Must be valid e-mail");
       !this.$v.email.required && errors.push("E-mail is required");
       return errors;
-    }
+    },
   },
   watch: {
     showProfileDialog: function(val) {
@@ -114,50 +124,61 @@ export default {
         this.country = this.user.country;
         this.isCreate = true;
       }
-    }
+    },
   },
   methods: {
     submit() {
       let newUser = {
         name: this.name,
-        email: this.email
+        email: this.email,
       };
       if (this.city) newUser.city = this.city;
       if (this.country) newUser.country = this.country;
-      this.$store.dispatch(UPDATE_USER, {
-        userId: this.user.userId,
-        val: newUser
-      });
-      if (this.imageFile) this.putPhoto(this.user.userId);
-      this.clear();
+      this.$store
+        .dispatch(UPDATE_USER, {
+          userId: this.user.userId,
+          val: newUser,
+        })
+        .then(() => {
+          if (this.imageFile) this.putPhoto(this.user.userId);
+          this.clear();
+        })
+        .catch(() => {
+          this.errors = "Failed to edit profile";
+        });
+    },
+    deletePhoto() {
+      this.$store.dispatch(DELETE_USER_PHOTO, this.user.userId);
+      this.$emit("closeDialog");
+      this.errors = null;
     },
     clear() {
       this.$v.$reset();
-      this.name = "";
-      this.email = "";
-      this.password = "";
-      this.city = "";
-      this.country = "";
+      this.name = this.user.name;
+      this.email = this.user.email;
+      this.city = this.user.city;
+      this.country = this.user.country;
       this.$store.dispatch(RESET_ERROR);
       this.show1 = false;
       this.imageFile = null;
       this.$refs.image.resetUploadedImage();
-      this.isCreate = false;
       this.$emit("closeDialog");
+      this.errors = null;
     },
     cancel() {
       this.$store.dispatch(RESET_ERROR);
       this.isCreate = false;
       this.$emit("closeDialog");
+      this.errors = null;
     },
     async putPhoto(userId) {
       this.$store.dispatch(PUT_USER_PHOTO, {
         userId: userId,
         image: this.imageFile,
-        imageType: this.imageFile.type
+        imageType: this.imageFile.type,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -7,15 +7,14 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import {
   SIGN_PETITION,
   UNSIGN_PETITION,
   FETCH_SIGNATURES,
 } from "../../store/actions.type";
+import { SET_IS_SIGNED } from "../../store/mutations.type";
 export default {
-  data: () => ({
-    isSigned: true,
-  }),
   props: {
     petitionId: {
       type: Number,
@@ -25,17 +24,19 @@ export default {
       type: Number,
       default: null,
     },
-    closingDate: {
-      default: null,
+    isExpired: {
+      type: Boolean,
+      default: false,
     },
   },
   created: function() {
     this.$store
       .dispatch(FETCH_SIGNATURES, this.petitionId)
       .then((signatures) => {
-        this.isSigned = signatures.some(
+        const signed = signatures.some(
           (signature) => signature.signatoryId == this.userId
         );
+        this.$store.commit(SET_IS_SIGNED, signed);
       });
   },
   watch: {
@@ -43,28 +44,25 @@ export default {
       this.$store
         .dispatch(FETCH_SIGNATURES, newPetitionId)
         .then((signatures) => {
-          this.isSigned = signatures.some(
+          const signed = signatures.some(
             (signature) => signature.signatoryId == this.userId
           );
+          this.$store.commit(SET_IS_SIGNED, signed);
         });
     },
   },
   computed: {
-    isExpired: function() {
-      return this.closingDate && new Date(this.closingDate) <= new Date();
-    },
+    ...mapGetters(["isSigned"]),
   },
   methods: {
     sign() {
       this.$store.dispatch(SIGN_PETITION, this.petitionId).then(() => {
         this.$store.dispatch(FETCH_SIGNATURES, this.petitionId);
-        this.isSigned = true;
       });
     },
     unsign() {
       this.$store.dispatch(UNSIGN_PETITION, this.petitionId).then(() => {
         this.$store.dispatch(FETCH_SIGNATURES, this.petitionId);
-        this.isSigned = false;
       });
     },
   },

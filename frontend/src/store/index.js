@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
 import home from "./home.module";
 import petition from "./petition.module";
@@ -13,4 +14,5 @@ export default new Vuex.Store({
     petition,
     user,
   },
+  plugins: [createPersistedState({ storage: window.sessionStorage })],
 });
