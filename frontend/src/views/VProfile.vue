@@ -11,17 +11,13 @@
     <v-row align="center">
       <PetitionCard
         v-for="(petition, i) in petitions"
-        :key="i"
+        :key="'VProfile' + i"
         :petition="petition"
+        :is-profile="true"
         :show-petition-details-dialog.sync="showPetitionDetailsDialog"
         :target-petition-id.sync="targetPetitionId"
       />
     </v-row>
-    <PetitionDetailsDialog
-      :petition-id.sync="targetPetitionId"
-      :show-petition-details-dialog.sync="showPetitionDetailsDialog"
-      :isProfile="true"
-    />
   </v-app>
 </template>
 
@@ -30,7 +26,6 @@ import { mapGetters } from "vuex";
 import NavBar from "@/components/NavBar";
 import ProfileCard from "@/components/card/ProfileCard";
 import { FETCH_PETITIONS } from "@/store/actions.type";
-import PetitionDetailsDialog from "@/components/dialog/PetitionDetailsDialog";
 import PetitionCard from "@/components/card/PetitionCard.vue";
 import PetitionCreateDialog from "@/components/dialog/PetitionCreateDialog";
 
@@ -39,19 +34,18 @@ export default {
     NavBar,
     ProfileCard,
     PetitionCard,
-    PetitionDetailsDialog,
-    PetitionCreateDialog
+    PetitionCreateDialog,
   },
   data: () => ({
     showPetitionDetailsDialog: false,
-    targetPetitionId: null
+    targetPetitionId: null,
   }),
   mounted() {
     this.$store.dispatch(FETCH_PETITIONS, { authorId: this.user.userId });
   },
   computed: {
-    ...mapGetters(["user", "petitions"])
-  }
+    ...mapGetters(["user", "petitions"]),
+  },
 };
 </script>
 

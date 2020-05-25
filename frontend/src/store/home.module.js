@@ -12,6 +12,7 @@ import {
   UPDATE_PETITION_IN_LIST,
   UPDATE_PAGE_NUMBER,
   UPDATE_PARAMS,
+  SET_IS_PROFILE,
 } from "./mutations.type";
 
 // the petitions should have those value
@@ -28,7 +29,12 @@ const state = {
   petitionCount: 0,
   page: 1,
   petitionCategory: [],
-  params: {}, // for searching, filtering, sorting petitions
+  params: {
+    q: null,
+    category: null,
+    sortBy: "ALPHABETICAL_DESC",
+  }, // for searching, filtering, sorting petitions
+  isProfile: false,
 };
 
 const getters = {
@@ -37,6 +43,10 @@ const getters = {
   },
   isLoading(state) {
     return state.isLoading;
+  },
+  // true if the user is on petition page and came from profile page
+  isProfile(state) {
+    return state.isProfile;
   },
   petitionCount(state) {
     return state.petitionCount;
@@ -113,6 +123,9 @@ const mutations = {
   },
   [UPDATE_PARAMS](state, val) {
     state.params = val;
+  },
+  [SET_IS_PROFILE](state, bool) {
+    state.isProfile = bool;
   },
 };
 

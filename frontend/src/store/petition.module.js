@@ -1,6 +1,7 @@
 import { PetitionsService, SignaturesService } from "@/common/api.service";
+import ApiService from "@/common/api.service";
+import JwtService from "@/common/jwt.service";
 import {
-  DO_RESET_PETITION,
   FETCH_PETITION,
   DELETE_PETITION,
   UPDATE_PETITION,
@@ -14,6 +15,8 @@ import {
   SET_PETITION,
   RESET_PETITION,
   SET_SIGNATORIES,
+  SET_IS_SIGNED,
+  SET_IS_PETITION_LOADING,
 } from "@/store/mutations.type";
 
 const initialState = {
@@ -31,12 +34,14 @@ const initialState = {
     closingDate: null,
   },
   signatories: [],
+  isSigned: false,
 };
 
 export const state = { ...initialState };
 
 export const actions = {
   async [FETCH_PETITION](context, slug) {
+    ApiService.setHeader(JwtService.getToken());
     const { data } = await PetitionsService.get(slug);
     data.createdDate = formatDate(data.createdDate);
     data.closingDate = formatDate(data.closingDate);
@@ -45,41 +50,56 @@ export const actions = {
     return data;
   },
   async [DELETE_PETITION](context, slug) {
+    ApiService.setHeader(JwtService.getToken());
     const { data } = await PetitionsService.destroy(slug);
-    context.commit(RESET_PETITION);
     return data;
   },
   async [UPDATE_PETITION](context, d) {
+    ApiService.setHeader(JwtService.getToken());
     await PetitionsService.update(d.petitionId, d.newPetition);
+    const { data } = await PetitionsService.get(d.petitionId);
+    data.createdDate = formatDate(data.createdDate);
+    data.closingDate = formatDate(data.closingDate);
+    data.displayDate = formatDisplayDate(data.createdDate, data.closingDate);
+    context.commit(SET_PETITION, data);
   },
   async [PUBLISH_PETITION](context, params) {
+    ApiService.setHeader(JwtService.getToken());
     return await PetitionsService.create(params);
   },
-  [DO_RESET_PETITION](context) {
-    context.commit(RESET_PETITION);
-  },
   async [PUT_PETITION_PHOTO](context, data) {
+    ApiService.setHeader(JwtService.getToken());
+    context.commit(SET_IS_PETITION_LOADING, true);
     await PetitionsService.updatePhoto(
       data.petitionId,
       data.image,
       data.imageType
     );
+    context.commit(SET_IS_PETITION_LOADING, false);
   },
   async [FETCH_SIGNATURES](context, slug) {
+    ApiService.setHeader(JwtService.getToken());
     const { data } = await SignaturesService.get(slug);
     context.commit(SET_SIGNATORIES, data);
     return data;
   },
   async [SIGN_PETITION](context, slug) {
+    ApiService.setHeader(JwtService.getToken());
     await SignaturesService.sign(slug);
+    context.commit(SET_IS_SIGNED, true);
   },
   async [UNSIGN_PETITION](context, slug) {
+    ApiService.setHeader(JwtService.getToken());
     await SignaturesService.unsign(slug);
+    context.commit(SET_IS_SIGNED, false);
   },
 };
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
+  [SET_IS_PETITION_LOADING](state, bool) {
+    state.isPetitionLoading = bool;
+  },
   [SET_PETITION](state, petition) {
     state.petition = petition;
   },
@@ -88,6 +108,9 @@ export const mutations = {
   },
   [RESET_PETITION](state) {
     state.petition = initialState.petition;
+  },
+  [SET_IS_SIGNED](state, bool) {
+    state.isSigned = bool;
   },
 };
 
@@ -112,6 +135,12 @@ function formatDisplayDate(createdDate, closingDate) {
 const getters = {
   petition(state) {
     return state.petition;
+  },
+  isSigned(state) {
+    return state.isSigned;
+  },
+  isPetitionLoading(state) {
+    return state.isPetitionLoading;
   },
   signatories(state) {
     state.signatories = state.signatories.map((signatory) => {

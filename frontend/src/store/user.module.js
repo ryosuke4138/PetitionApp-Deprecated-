@@ -46,7 +46,7 @@ const actions = {
     try {
       const { data } = await UserService.login(credentials);
       commit(SET_AUTH, data.token);
-      ApiService.setHeader(data.token);
+      ApiService.setHeader(JwtService.getToken());
       const result = await UserService.get(data.userId);
       let userObj = result.data;
       userObj.userId = data.userId;
@@ -71,6 +71,7 @@ const actions = {
   },
   async [FETCH_USER]({ commit }, userId) {
     try {
+      ApiService.setHeader(JwtService.getToken());
       const { data } = await UserService.get(userId);
       data.userId = userId;
       commit(SET_USER, data);
@@ -80,18 +81,21 @@ const actions = {
     }
   },
   async [UPDATE_USER]({ commit }, d) {
+    ApiService.setHeader(JwtService.getToken());
     await UserService.update(d.userId, d.val);
     const { data } = await UserService.get(d.userId);
     data.userId = d.userId;
     commit(SET_USER, data);
   },
   async [FETCH_USER_PHOTO](context, userId) {
+    ApiService.setHeader(JwtService.getToken());
     return await UserService.getPhoto(userId);
   },
   [RESET_ERROR]({ commit }) {
     commit(SET_ERROR, null);
   },
   async [PUT_USER_PHOTO]({ commit }, data) {
+    ApiService.setHeader(JwtService.getToken());
     commit(SET_IS_USER_LOADING, true);
     await UserService.updatePhoto(data.userId, data.image, data.imageType);
     commit(SET_IS_USER_LOADING, false);

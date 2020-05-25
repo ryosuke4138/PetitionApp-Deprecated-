@@ -2,7 +2,9 @@
   <v-card class="mx-auto" max-width="344" outlined>
     <v-list-item three-line>
       <v-list-item-content>
-        <v-list-item-title class="headline mb-1">{{ user.name }}</v-list-item-title>
+        <v-list-item-title class="headline mb-1">{{
+          user.name
+        }}</v-list-item-title>
         <v-list-item-subtitle>Email: {{ user.email }}</v-list-item-subtitle>
         <v-list-item-subtitle>City: {{ user.city }}</v-list-item-subtitle>
         <v-list-item-subtitle>Country: {{ user.country }}</v-list-item-subtitle>
@@ -38,15 +40,15 @@ export default {
   components: {
     UserImage,
     EditProfileDialog,
-    ChangePasswordDialog
+    ChangePasswordDialog,
   },
   data: () => ({
     isOpenProfileDialog: false,
     isOpenPasswordDialog: false,
-    index: 0
+    index: 0,
   }),
   computed: {
-    ...mapGetters(["user", "isUserLoading"])
+    ...mapGetters(["user", "isUserLoading"]),
   },
   methods: {
     openProfileDialog() {
@@ -54,13 +56,13 @@ export default {
     },
     openPasswordDialog() {
       this.isOpenPasswordDialog = true;
-    }
+    },
   },
   watch: {
     isUserLoading: function(val) {
-      if (val) this.index++;
-    }
-  }
+      if (!val) this.index++;
+    },
+  },
 };
 </script>
 

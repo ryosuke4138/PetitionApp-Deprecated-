@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-toolbar max-height="64px">
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
       <TitleButton />
       <v-spacer></v-spacer>
       <v-btn v-if="!isAuthenticated" @click="showLoginDialog = true"

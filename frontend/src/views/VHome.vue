@@ -1,55 +1,54 @@
 <template>
-  <div>
-    <PetitionSearchCard />
+  <v-app>
+    <NavBar />
+    <PetitionCreateDialog />
+    <PetitionSearchCard :default-params="params" />
     <v-row align="center">
       <PetitionCard
         v-for="(petition, i) in slicedPetition"
-        :key="i"
+        :key="'VHome' + i"
         :petition="petition"
-        :show-petition-details-dialog.sync="showPetitionDetailsDialog"
         :target-petition-id.sync="targetPetitionId"
-      />
-      <PetitionDetailsDialog
-        :petition-id.sync="targetPetitionId"
-        :show-petition-details-dialog.sync="showPetitionDetailsDialog"
       />
     </v-row>
     <v-row class="pagination">
       <PaginationButton />
     </v-row>
-  </div>
+  </v-app>
 </template>
 
 <script>
+import NavBar from "@/components/NavBar";
+import PetitionCreateDialog from "@/components/dialog/PetitionCreateDialog";
 import { mapGetters } from "vuex";
 import { FETCH_PETITIONS } from "@/store/actions.type";
-import PetitionDetailsDialog from "@/components/dialog/PetitionDetailsDialog";
 import PetitionCard from "@/components/card/PetitionCard.vue";
 import PetitionSearchCard from "@/components/card/PetitionSearchCard.vue";
 import PaginationButton from "@/components/ui/PaginationButton.vue";
 
 export default {
+  name: "home",
   components: {
+    NavBar,
+    PetitionCreateDialog,
     PetitionCard,
     PetitionSearchCard,
-    PetitionDetailsDialog,
-    PaginationButton
+    PaginationButton,
   },
   data: () => ({
-    showPetitionDetailsDialog: false,
-    targetPetitionId: null
+    targetPetitionId: null,
   }),
   mounted() {
-    this.$store.dispatch(FETCH_PETITIONS);
+    this.$store.dispatch(FETCH_PETITIONS, this.params);
   },
   computed: {
-    ...mapGetters(["petitions", "page", "petitionCount"]),
+    ...mapGetters(["petitions", "page", "petitionCount", "params"]),
     // only 10 petitions should be appeared in the page
     slicedPetition() {
       const startIndex = (this.page - 1) * 10;
       return this.petitions.slice(startIndex, startIndex + 10);
-    }
-  }
+    },
+  },
 };
 </script>
 
