@@ -3,11 +3,13 @@
     <NavBar />
     <PetitionCreateDialog :isProfile="true" />
     <h1 :class="{ title: true }">Profile</h1>
-    <v-row class="profile" align="center">
+    <v-row align="center">
       <ProfileCard />
     </v-row>
-    <h1 class="mypetition">My Petitions</h1>
-    <h3 v-if="!petitions.length" class="alert">No Petitions Registered..</h3>
+    <h1 :class="{ title: true }">My Petitions</h1>
+    <h3 v-if="!petitions.length" :class="{ alert: true }">
+      No Petitions Registered..
+    </h3>
     <v-row align="center">
       <PetitionCard
         v-for="(petition, i) in petitions"
@@ -56,13 +58,6 @@ export default {
   margin-bottom: 20px;
   margin-top: 92px;
   font-size: 24px;
-}
-.mypetition {
-  font-weight: normal;
-  text-align: center;
-  margin-top: 50px;
-  margin-bottom: 20px;
-  font-size: 20px;
 }
 .alert {
   font-weight: normal;

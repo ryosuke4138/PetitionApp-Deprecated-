@@ -10,6 +10,7 @@ import {
   FETCH_USER_PHOTO,
   RESET_ERROR,
   PUT_USER_PHOTO,
+  DELETE_USER_PHOTO,
 } from "./actions.type";
 import {
   SET_AUTH,
@@ -98,6 +99,12 @@ const actions = {
     ApiService.setHeader(JwtService.getToken());
     commit(SET_IS_USER_LOADING, true);
     await UserService.updatePhoto(data.userId, data.image, data.imageType);
+    commit(SET_IS_USER_LOADING, false);
+  },
+  async [DELETE_USER_PHOTO]({ commit }, userId) {
+    ApiService.setHeader(JwtService.getToken());
+    commit(SET_IS_USER_LOADING, true);
+    await UserService.deletePhoto(userId);
     commit(SET_IS_USER_LOADING, false);
   },
 };

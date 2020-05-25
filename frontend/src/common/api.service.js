@@ -50,9 +50,7 @@ const ApiService = {
   },
 
   delete(resource) {
-    return Vue.axios.delete(resource).catch((error) => {
-      throw new Error(`ApiService ${error}`);
-    });
+    return Vue.axios.delete(resource);
   },
 
   getSignatures(slug) {
@@ -122,5 +120,8 @@ export const UserService = {
   },
   updatePhoto(slug, params, imageType) {
     return ApiService.putPhoto(`users/${slug}/photo`, params, imageType);
+  },
+  deletePhoto(slug) {
+    return ApiService.delete(`users/${slug}/photo`);
   },
 };

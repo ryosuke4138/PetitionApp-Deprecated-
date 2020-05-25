@@ -1,5 +1,6 @@
 export const FETCH_PETITION = "fetchPetition";
 export const DELETE_PETITION = "deletePetition";
+export const DELETE_USER_PHOTO = "deleteUserPhoto";
 export const UPDATE_PETITION = "updatePetition";
 export const PUBLISH_PETITION = "publishPetition";
 export const PUT_PETITION_PHOTO = "putPetitionPhoto";

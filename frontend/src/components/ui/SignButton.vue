@@ -24,8 +24,9 @@ export default {
       type: Number,
       default: null,
     },
-    closingDate: {
-      default: null,
+    isExpired: {
+      type: Boolean,
+      default: false,
     },
   },
   created: function() {
@@ -52,9 +53,6 @@ export default {
   },
   computed: {
     ...mapGetters(["isSigned"]),
-    isExpired: function() {
-      return this.closingDate && new Date(this.closingDate) <= new Date();
-    },
   },
   methods: {
     sign() {

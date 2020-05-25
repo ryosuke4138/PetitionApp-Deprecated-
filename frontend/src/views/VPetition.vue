@@ -5,6 +5,7 @@
       :key="index"
       :class="{ petitionImg: true }"
       max-height="400px"
+      max-width="800px"
       :src="API_URL + 'petitions/' + petition.petitionId + '/photo'"
     ></v-img>
     <div :class="{ row: true }">
@@ -20,11 +21,11 @@
         v-if="isAuthenticated && !isAuthor"
         :petitionId="petition.petitionId"
         :userId="user.userId"
-        :closingDate="petition.closingDate"
+        :isExpired="isExpired"
       />
       <v-btn
         :class="{ actionButton: true }"
-        v-if="isAuthor"
+        v-if="isAuthor && !isExpired"
         color="green darken-1"
         text
         @click.native="edit"
@@ -46,8 +47,8 @@
         >Close</v-btn
       >
     </div>
-    <!-- <SocialSharingButton /> -->
     <v-divider :class="{ divider: true }" />
+    <SocialSharingButton />
     <p :class="{ userInfo: true }">Category: {{ petition.category }}</p>
     <p :class="{ userInfo: true }">
       Signature Count: {{ petition.signatureCount }}
@@ -57,9 +58,7 @@
       <v-avatar size="36">
         <UserImage :userId="petition.authorId" />
       </v-avatar>
-      <!-- TODO: FIX for the case that city and/or country is null -->
-      {{ petition.authorName }} ({{ petition.authorCity }},
-      {{ petition.authorCountry }})
+      {{ petition.authorName }} {{ place }}
     </p>
     <p :class="{ userInfo: true }">Description: {{ petition.description }}</p>
     <v-divider />
@@ -92,7 +91,7 @@ import { FETCH_PETITIONS, DELETE_PETITION } from "@/store/actions.type";
 import UserImage from "@/components/ui/UserImage";
 import SignButton from "@/components/ui/SignButton";
 import PetitionEditDialog from "@/components/dialog/PetitionEditDialog.vue";
-// import SocialSharingButton from "@/components/ui/SocialSharingButton";
+import SocialSharingButton from "@/components/ui/SocialSharingButton";
 import API_URL from "@/common/config";
 import { RESET_PETITION } from "../store/mutations.type";
 
@@ -102,7 +101,7 @@ export default {
     UserImage,
     SignButton,
     PetitionEditDialog,
-    // SocialSharingButton,
+    SocialSharingButton,
   },
   data: () => ({
     API_URL: API_URL,
@@ -124,10 +123,33 @@ export default {
         this.isAuthenticated && this.user.userId === this.petition.authorId
       );
     },
+    isExpired: function() {
+      return (
+        this.petition.closingDate &&
+        new Date(this.petition.closingDate) <= new Date()
+      );
+    },
+    place: function() {
+      if (this.petition.authorCity && this.petition.authorCountry) {
+        return (
+          "(" +
+          this.petition.authorCity +
+          ", " +
+          this.petition.authorCountry +
+          ")"
+        );
+      } else if (this.petition.authorCity && !this.petition.authorCountry) {
+        return "(" + this.petition.authorCity + ")";
+      } else if (!this.petition.authorCity && this.petition.authorCountry) {
+        return "(" + this.petition.authorCountry + ")";
+      } else {
+        return "";
+      }
+    },
   },
   watch: {
     isPetitionLoading: function() {
-      // this.index++;
+      this.index++;
     },
   },
   methods: {
@@ -177,6 +199,7 @@ export default {
   text-align: center;
   margin-top: 7px;
   margin-right: 13px;
+  margin-bottom: 0px;
   font-size: 20px;
 }
 .subtitle {
@@ -187,7 +210,7 @@ export default {
   font-size: 18px;
 }
 .divider {
-  margin-top: 42px;
+  margin-top: 40px;
 }
 .userInfo {
   font-weight: normal;
@@ -211,6 +234,8 @@ export default {
 }
 .petitionImg {
   margin-top: 64px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .actionButton {
   margin-top: 5px;
